@@ -9,9 +9,10 @@ from models.template import Template
 from models.company import CompanySetting
 from werkzeug.security import generate_password_hash
 
-MASTER_NAME     = 'Sologix Admin'
-MASTER_USERNAME = 'master'
-MASTER_PASSWORD = 'Admin@1234'
+import os
+MASTER_NAME     = os.environ.get('MASTER_NAME', 'Sologix Admin')
+MASTER_USERNAME = os.environ.get('MASTER_USERNAME', 'master')
+MASTER_PASSWORD = os.environ.get('MASTER_PASSWORD', 'Admin@1234')
 
 app = create_app()
 with app.app_context():
