@@ -1,125 +1,208 @@
 {% extends "base.html" %}
-{% block title %}{{ proposal.proposal_number }} – Sologix{% endblock %}
+{% block title %}{{ proposal.proposal_number }} – {{ proposal.customer_name }}{% endblock %}
+{% block meta_description %}Solar proposal {{ proposal.proposal_number }} for {{ proposal.customer_name }} – {{ proposal.plant_capacity }} kWp {{ proposal.system_type }} system. Grand Total: ₹{{ "{:,.0f}".format(proposal.grand_total) }}.{% endblock %}
+{% block og_title %}{{ proposal.proposal_number }} | Sologix Energy{% endblock %}
+
 {% block content %}
 {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="mb-0"><i class="bi bi-file-text me-2 text-success"></i>{{ proposal.proposal_number }}</h2>
-        <span class="badge bg-{{ sc.get(proposal.status,'secondary') }} fs-6">{{ proposal.status }}</span>
-        <span class="badge bg-{{ 'primary' if proposal.system_type=='ONGRID' else 'warning text-dark' }} ms-1">{{ proposal.system_type }}</span>
+<div class="page-header mb-3">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+        <div>
+            <h2 class="mb-0 d-inline"><i class="bi bi-file-text me-2 text-success"></i>{{ proposal.proposal_number }}</h2>
+            <span class="badge bg-{{ sc.get(proposal.status,'secondary') }} ms-2">{{ proposal.status }}</span>
+            <span class="badge bg-{{ 'primary' if proposal.system_type=='ONGRID' else 'warning text-dark' }} ms-1">{{ proposal.system_type }}</span>
+        </div>
     </div>
-    <div class="btn-group">
-        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    <div class="d-flex gap-2 flex-wrap">
         {% if proposal.status == 'DRAFT' %}
-        <a href="{{ url_for('proposals.edit', proposal_id=proposal.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+        <a href="{{ url_for('proposals.edit', proposal_id=proposal.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i>Edit
+        </a>
         {% endif %}
         {% if has_pdf %}
-        <a href="{{ url_for('proposals.download', proposal_id=proposal.id) }}" class="btn btn-outline-dark"><i class="bi bi-download me-1"></i>Download PDF</a>
+        <a href="{{ url_for('proposals.download', proposal_id=proposal.id) }}" class="btn btn-outline-dark">
+            <i class="bi bi-download me-1"></i>PDF
+        </a>
         {% endif %}
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-3">
 <div class="col-lg-8">
 
 <!-- Customer & System -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-light"><strong>Customer & System</strong></div>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header section-header">
+        <i class="bi bi-person-lines-fill me-2"></i>Customer & System Details
+    </div>
     <div class="card-body">
-        <div class="row g-2">
-            <div class="col-md-6"><span class="text-muted small">Customer</span><div class="fw-bold">{{ proposal.customer_name }}</div></div>
-            <div class="col-md-6"><span class="text-muted small">Contact</span><div>{{ proposal.customer_contact or '—' }}</div></div>
-            <div class="col-12"><span class="text-muted small">Address</span><div>{{ proposal.customer_address }}</div></div>
-            <div class="col-md-3"><span class="text-muted small">System Type</span><div>{{ proposal.system_type }}</div></div>
-            <div class="col-md-3"><span class="text-muted small">Plant Capacity</span><div>{{ proposal.plant_capacity }} kW</div></div>
-            <div class="col-md-3"><span class="text-muted small">Total Area</span><div>{{ proposal.total_area }} sq.ft</div></div>
-            <div class="col-md-3"><span class="text-muted small">Inverter</span><div>{{ proposal.inverter_capacity }} kW</div></div>
-            <div class="col-md-3"><span class="text-muted small">Mounting</span><div>{{ proposal.mounting_type }}</div></div>
-            <div class="col-md-3"><span class="text-muted small">Tilt Angle</span><div>{{ proposal.tilt_angle }}</div></div>
-            <div class="col-md-3"><span class="text-muted small">Date</span><div>{{ proposal.proposal_date.strftime('%d %b %Y') if proposal.proposal_date else '—' }}</div></div>
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <div class="detail-label">Customer Name</div>
+                <div class="fw-semibold">{{ proposal.customer_name }}</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="detail-label">Contact</div>
+                <div>{{ proposal.customer_contact or '—' }}</div>
+            </div>
+            <div class="col-12">
+                <div class="detail-label">Address</div>
+                <div>{{ proposal.customer_address }}</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">System Type</div>
+                <div class="fw-semibold">{{ proposal.system_type }}</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Plant Capacity</div>
+                <div class="fw-semibold">{{ proposal.plant_capacity }} kWp</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Total Area</div>
+                <div>{{ proposal.total_area }} sq.ft</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Inverter</div>
+                <div>{{ proposal.inverter_capacity }} kW</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Mounting</div>
+                <div>{{ proposal.mounting_type }}</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Tilt Angle</div>
+                <div>{{ proposal.tilt_angle }}</div>
+            </div>
+            <div class="col-6 col-sm-3">
+                <div class="detail-label">Proposal Date</div>
+                <div>{{ proposal.proposal_date.strftime('%d %b %Y') if proposal.proposal_date else '—' }}</div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Bill of Material -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-light"><strong>Bill of Material</strong></div>
-    <div class="card-body">
-        <table class="table table-sm">
-            <tbody>
-            {% for m in modules %}
-            <tr>
-                <td>Modules (Topcon, Bifacial) {{ m.module_type }} {{ m.wattage }}</td>
-                <td>{{ m.quantity }} nos.</td>
-                <td class="text-muted small">{{ m.make }}</td>
-            </tr>
-            {% endfor %}
-            <tr><td>Inverter</td><td>{{ proposal.inverter_capacity }} kW</td><td class="text-muted small">Growatt/Deye</td></tr>
-            <tr><td>Mounting Structure</td><td>{{ proposal.plant_capacity }} kW</td><td class="text-muted small">HDGI</td></tr>
-            {% if proposal.battery %}
-            <tr><td>Battery {{ proposal.battery.capacity_kwh }} kWhr</td><td>{{ proposal.battery.quantity }} nos.</td><td class="text-muted small">{{ proposal.battery.chemistry }}</td></tr>
-            {% endif %}
-            <tr><td>DC Cable/AC Cable</td><td>As per requirement</td><td class="text-muted small">MNRE spec</td></tr>
-            <tr><td>ACDB with surge protection</td><td>1</td><td class="text-muted small">Sologix</td></tr>
-            <tr><td>DCDB with surge protection</td><td>1</td><td class="text-muted small">Sologix</td></tr>
-            <tr><td>Earthing</td><td>3 nos.</td><td class="text-muted small">Indian Standard Make</td></tr>
-            <tr><td>Lightning Arrestor</td><td>1 no.</td><td class="text-muted small">Indian Standard Make</td></tr>
-            </tbody>
-        </table>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header section-header">
+        <i class="bi bi-boxes me-2"></i>Bill of Material
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr><th>Item</th><th>Quantity</th><th class="d-none d-sm-table-cell">Make</th></tr>
+                </thead>
+                <tbody>
+                {% for m in modules %}
+                <tr>
+                    <td>Modules (Topcon, Bifacial) {{ m.module_type }} <span class="text-muted small">{{ m.wattage }}</span></td>
+                    <td>{{ m.quantity }} nos.</td>
+                    <td class="d-none d-sm-table-cell text-muted small">{{ m.make }}</td>
+                </tr>
+                {% endfor %}
+                <tr><td>Inverter</td><td>{{ proposal.inverter_capacity }} kW</td><td class="d-none d-sm-table-cell text-muted small">Growatt / Deye</td></tr>
+                <tr><td>Mounting Structure</td><td>{{ proposal.plant_capacity }} kW</td><td class="d-none d-sm-table-cell text-muted small">HDGI</td></tr>
+                {% if proposal.battery %}
+                <tr>
+                    <td>Battery {{ proposal.battery.capacity_kwh }} kWhr</td>
+                    <td>{{ proposal.battery.quantity }} nos.</td>
+                    <td class="d-none d-sm-table-cell text-muted small">{{ proposal.battery.chemistry }}</td>
+                </tr>
+                {% endif %}
+                <tr><td>DC / AC Cable</td><td class="text-muted">As required</td><td class="d-none d-sm-table-cell text-muted small">MNRE spec</td></tr>
+                <tr><td>ACDB with surge protection</td><td>1</td><td class="d-none d-sm-table-cell text-muted small">Sologix</td></tr>
+                <tr><td>DCDB with surge protection</td><td>1</td><td class="d-none d-sm-table-cell text-muted small">Sologix</td></tr>
+                <tr><td>Earthing</td><td>3 nos.</td><td class="d-none d-sm-table-cell text-muted small">Indian Standard</td></tr>
+                <tr><td>Lightning Arrestor</td><td>1 no.</td><td class="d-none d-sm-table-cell text-muted small">Indian Standard</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Commercial Offer -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-light"><strong>Commercial Offer</strong></div>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header section-header">
+        <i class="bi bi-currency-rupee me-2"></i>Commercial Offer
+    </div>
     <div class="card-body p-0">
-        <table class="table mb-0">
+        <table class="table mb-0 align-middle">
             <tbody>
-            <tr><td>Base Price (Supply & Installation)</td><td class="text-end">₹{{ "{:,.2f}".format(proposal.base_price) }}</td></tr>
+            <tr>
+                <td>Supply &amp; Installation</td>
+                <td class="text-end">₹{{ "{:,.2f}".format(proposal.base_price) }}</td>
+            </tr>
             {% for a in addons %}
-            <tr><td>{{ a.name }}</td><td class="text-end">₹{{ "{:,.2f}".format(a.amount) }}</td></tr>
+            <tr>
+                <td>{{ a.name }}</td>
+                <td class="text-end">₹{{ "{:,.2f}".format(a.amount) }}</td>
+            </tr>
             {% endfor %}
             {% if proposal.discount_percent > 0 %}
-            <tr class="text-danger"><td>Discount ({{ proposal.discount_percent }}%)</td><td class="text-end">-₹{{ "{:,.2f}".format(proposal.discount_amount) }}</td></tr>
+            <tr class="text-danger">
+                <td>Discount ({{ proposal.discount_percent }}%)</td>
+                <td class="text-end">−₹{{ "{:,.2f}".format(proposal.discount_amount) }}</td>
+            </tr>
             {% endif %}
-            <tr class="table-success fw-bold"><td>Grand Total (incl. GST)</td><td class="text-end">₹{{ "{:,.2f}".format(proposal.grand_total) }}</td></tr>
-            <tr class="text-success"><td><strong>CFA (DBT after Commissioning)</strong></td><td class="text-end"><strong>₹{{ "{:,.0f}".format(proposal.cfa_amount) }}</strong></td></tr>
+            <tr class="table-success fw-bold fs-6">
+                <td>Grand Total <small class="fw-normal text-muted">(incl. GST)</small></td>
+                <td class="text-end">₹{{ "{:,.2f}".format(proposal.grand_total) }}</td>
+            </tr>
+            <tr class="text-success">
+                <td><strong>CFA</strong> <small class="text-muted fw-normal">(DBT after Commissioning)</small></td>
+                <td class="text-end fw-bold">₹{{ "{:,.0f}".format(proposal.cfa_amount) }}</td>
+            </tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <!-- Payment Terms -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-light"><strong>Payment Terms</strong></div>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header section-header">
+        <i class="bi bi-calendar-check me-2"></i>Payment Terms
+    </div>
     <div class="card-body p-0">
-        <table class="table mb-0">
-            <thead class="table-light"><tr><th>#</th><th>Milestone</th><th class="text-end">Amount</th></tr></thead>
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th style="width:2rem;">#</th><th>Milestone</th><th class="text-end">Amount</th></tr>
+            </thead>
             <tbody>
             {% for p in payments %}
-            <tr><td>{{ p.sequence }}</td><td>{{ p.milestone }}</td><td class="text-end">₹{{ "{:,.2f}".format(p.amount) }}</td></tr>
+            <tr>
+                <td class="text-muted">{{ p.sequence }}</td>
+                <td>{{ p.milestone }}</td>
+                <td class="text-end">₹{{ "{:,.2f}".format(p.amount) }}</td>
+            </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
-</div><!-- end left col -->
+</div><!-- end col-lg-8 -->
 
-<!-- Right: Actions -->
+<!-- Right sidebar -->
 <div class="col-lg-4">
 
 <!-- Generate PDF -->
 {% if proposal.status in ('DRAFT', 'GENERATED') %}
 <div class="card border-0 shadow-sm mb-3">
-    <div class="card-header bg-success text-white"><i class="bi bi-file-pdf me-2"></i>Generate PDF</div>
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-file-pdf me-2"></i>Generate PDF
+    </div>
     <div class="card-body">
-        {% if proposal.status == 'DRAFT' %}
-        <p class="text-muted small">Payment total must match Grand Total to generate.</p>
-        {% else %}
-        <p class="text-muted small">Re-generate an updated PDF version.</p>
-        {% endif %}
+        <p class="text-muted small mb-3">
+            {% if proposal.status == 'DRAFT' %}
+            Payments must sum to Grand Total before generating.
+            {% else %}
+            Re-generate an updated version of the proposal.
+            {% endif %}
+        </p>
         <form method="post" action="{{ url_for('proposals.generate', proposal_id=proposal.id) }}">
             <button type="submit" class="btn btn-success w-100">
                 <i class="bi bi-file-earmark-pdf me-2"></i>Generate PDF
@@ -131,34 +214,38 @@
 
 <!-- Accept -->
 {% if proposal.status == 'GENERATED' %}
-<div class="card border-0 shadow-sm mb-3 border-success">
-    <div class="card-header bg-success text-white"><i class="bi bi-check-circle me-2"></i>Accept Proposal</div>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-check-circle me-2"></i>Accept Proposal
+    </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('proposals.accept', proposal_id=proposal.id) }}">
-            <div class="mb-2">
-                <label class="form-label small">Notes (optional)</label>
-                <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea>
+            <div class="mb-3">
+                <label class="form-label small">Notes <span class="text-muted">(optional)</span></label>
+                <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Any remarks..."></textarea>
             </div>
             <button type="submit" class="btn btn-success w-100"
-                    onclick="return confirm('Accept this proposal?')">
-                <i class="bi bi-check2-circle me-1"></i>Accept Proposal
+                    onclick="return confirm('Mark this proposal as accepted?')">
+                <i class="bi bi-check2-circle me-1"></i>Accept
             </button>
         </form>
     </div>
 </div>
 
 <!-- Reject -->
-<div class="card border-0 shadow-sm mb-3 border-danger">
-    <div class="card-header bg-danger text-white"><i class="bi bi-x-circle me-2"></i>Reject Proposal</div>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header bg-danger text-white">
+        <i class="bi bi-x-circle me-2"></i>Reject Proposal
+    </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('proposals.reject', proposal_id=proposal.id) }}">
-            <div class="mb-2">
-                <label class="form-label small">Rejection Reason <span class="text-danger">*</span></label>
-                <textarea name="reason" class="form-control form-control-sm" rows="2" required></textarea>
+            <div class="mb-3">
+                <label class="form-label small">Reason <span class="text-danger">*</span></label>
+                <textarea name="reason" class="form-control form-control-sm" rows="2" required placeholder="Reason for rejection..."></textarea>
             </div>
             <button type="submit" class="btn btn-danger w-100"
                     onclick="return confirm('Reject this proposal?')">
-                <i class="bi bi-x-circle me-1"></i>Reject Proposal
+                <i class="bi bi-x-circle me-1"></i>Reject
             </button>
         </form>
     </div>
@@ -166,35 +253,46 @@
 {% endif %}
 
 {% if proposal.accepted_record %}
-<div class="card border-success border-0 shadow-sm mb-3">
+<div class="card border-0 shadow-sm mb-3" style="border-left:4px solid #2e7d32 !important;">
     <div class="card-body text-success">
         <i class="bi bi-check-circle-fill me-2"></i>
-        <strong>Accepted</strong> on {{ proposal.accepted_record.accepted_at.strftime('%d %b %Y %H:%M') }}
-        {% if proposal.accepted_record.notes %}<p class="mt-1 small mb-0">{{ proposal.accepted_record.notes }}</p>{% endif %}
+        <strong>Accepted</strong>
+        <div class="text-muted small mt-1">{{ proposal.accepted_record.accepted_at.strftime('%d %b %Y, %H:%M') }}</div>
+        {% if proposal.accepted_record.notes %}
+        <p class="mt-1 small mb-0 text-dark">{{ proposal.accepted_record.notes }}</p>
+        {% endif %}
     </div>
 </div>
 {% endif %}
 
 {% if proposal.rejected_record %}
-<div class="card border-danger border-0 shadow-sm mb-3">
+<div class="card border-0 shadow-sm mb-3" style="border-left:4px solid #dc3545 !important;">
     <div class="card-body text-danger">
         <i class="bi bi-x-circle-fill me-2"></i>
-        <strong>Rejected</strong> on {{ proposal.rejected_record.rejected_at.strftime('%d %b %Y %H:%M') }}
-        <p class="mt-1 small mb-0">{{ proposal.rejected_record.reason }}</p>
+        <strong>Rejected</strong>
+        <div class="text-muted small mt-1">{{ proposal.rejected_record.rejected_at.strftime('%d %b %Y, %H:%M') }}</div>
+        <p class="mt-1 small mb-0 text-dark">{{ proposal.rejected_record.reason }}</p>
     </div>
 </div>
 {% endif %}
 
-<!-- Summary Card -->
+<!-- Financial Summary -->
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-light"><strong>Financial Summary</strong></div>
-    <div class="card-body">
+    <div class="card-header section-header">
+        <i class="bi bi-bar-chart me-2"></i>Financial Summary
+    </div>
+    <div class="card-body p-0">
         <table class="table table-sm mb-0">
-            <tr><td>Base Price</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.base_price) }}</td></tr>
-            <tr><td>Add-ons</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.addon_total) }}</td></tr>
-            <tr><td>Subtotal</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.subtotal) }}</td></tr>
-            <tr><td>Discount ({{ proposal.discount_percent }}%)</td><td class="text-end text-danger">-₹{{ "{:,.0f}".format(proposal.discount_amount) }}</td></tr>
-            <tr class="table-success"><td><strong>Grand Total</strong></td><td class="text-end fw-bold">₹{{ "{:,.0f}".format(proposal.grand_total) }}</td></tr>
+            <tbody>
+            <tr><td class="text-muted">Base Price</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.base_price) }}</td></tr>
+            <tr><td class="text-muted">Add-ons</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.addon_total) }}</td></tr>
+            <tr><td class="text-muted">Subtotal</td><td class="text-end">₹{{ "{:,.0f}".format(proposal.subtotal) }}</td></tr>
+            <tr><td class="text-muted">Discount</td><td class="text-end text-danger">−₹{{ "{:,.0f}".format(proposal.discount_amount) }}</td></tr>
+            <tr class="table-success">
+                <td class="fw-bold">Grand Total</td>
+                <td class="text-end fw-bold">₹{{ "{:,.0f}".format(proposal.grand_total) }}</td>
+            </tr>
+            </tbody>
         </table>
     </div>
 </div>

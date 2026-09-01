@@ -3,10 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sologix Proposal System{% endblock %}</title>
+
+    <!-- SEO: primary meta -->
+    <title>{% block title %}Sologix Proposal System{% endblock %} | Sologix Energy</title>
+    <meta name="description" content="{% block meta_description %}Sologix Energy Private Limited – Solar Proposal Management System. Create, manage and track solar plant proposals efficiently.{% endblock %}">
+    <meta name="application-name" content="Sologix Proposal System">
+    <meta name="author" content="Sologix Energy Private Limited">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- SEO: Open Graph (for previews when shared internally) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Sologix Energy">
+    <meta property="og:title" content="{% block og_title %}Sologix Proposal System{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Solar Proposal Management System by Sologix Energy Private Limited, Ranchi.{% endblock %}">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#2e7d32">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    {% block head %}{% endblock %}
 </head>
 <body>
 {% if current_user.is_authenticated %}
@@ -16,29 +37,32 @@
             <i class="bi bi-sun-fill text-warning"></i>
             <span>Sologix</span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link px-3" href="{{ url_for('dashboard.index') }}">
+                    <a class="nav-link px-3 {% if request.endpoint and request.endpoint.startswith('dashboard') %}active{% endif %}"
+                       href="{{ url_for('dashboard.index') }}" aria-label="Dashboard">
                         <i class="bi bi-speedometer2 me-1"></i>Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-3" href="{{ url_for('proposals.list_proposals') }}">
+                    <a class="nav-link px-3 {% if request.endpoint and request.endpoint.startswith('proposals') %}active{% endif %}"
+                       href="{{ url_for('proposals.list_proposals') }}" aria-label="Proposals">
                         <i class="bi bi-file-text me-1"></i>Proposals
                     </a>
                 </li>
                 {% if current_user.is_master() %}
                 <li class="nav-item">
-                    <a class="nav-link px-3" href="{{ url_for('users.list_users') }}">
+                    <a class="nav-link px-3 {% if request.endpoint and request.endpoint.startswith('users') %}active{% endif %}"
+                       href="{{ url_for('users.list_users') }}" aria-label="Users">
                         <i class="bi bi-people me-1"></i>Users
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle px-3" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-gear me-1"></i>Admin
                     </a>
                     <ul class="dropdown-menu shadow border-0">
@@ -58,10 +82,10 @@
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 px-2" href="#" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="avatar-circle">{{ current_user.name[0].upper() }}</div>
-                        <span class="d-none d-md-inline">{{ current_user.name }}</span>
-                        <span class="badge bg-warning text-dark ms-1 d-none d-md-inline">{{ current_user.role }}</span>
+                        <span class="d-none d-md-inline ms-1">{{ current_user.name }}</span>
+                        <span class="badge bg-warning text-dark ms-1 d-none d-lg-inline">{{ current_user.role }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                         <li>
@@ -70,7 +94,7 @@
                                 <span class="badge bg-warning text-dark ms-1">{{ current_user.role }}</span>
                             </span>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li><hr class="dropdown-divider my-1"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
@@ -91,9 +115,9 @@
         <div class="col-12">
             {% for cat, msg in messages %}
             <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
-                <i class="bi bi-{% if cat == 'success' %}check-circle{% elif cat == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                <i class="bi bi-{% if cat == 'success' %}check-circle{% elif cat == 'danger' %}exclamation-circle{% elif cat == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
                 {{ msg }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
         </div>

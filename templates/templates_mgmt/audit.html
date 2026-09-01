@@ -1,28 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Audit Logs – Sologix{% endblock %}
+{% block title %}Audit Logs{% endblock %}
+{% block meta_description %}System audit trail – all actions performed in the Sologix Energy Proposal Management System.{% endblock %}
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-clock-history me-2 text-success"></i>Audit Logs</h2>
+<div class="page-header">
+    <h2><i class="bi bi-clock-history me-2 text-success"></i>Audit Logs</h2>
+    <span class="badge bg-secondary">Last 200 entries</span>
+</div>
+
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0">
+            <table class="table table-sm table-hover mb-0 align-middle">
                 <thead class="table-light">
-                    <tr><th>Time</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th><th>IP</th></tr>
+                    <tr>
+                        <th class="text-nowrap">Time</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th class="d-none d-md-table-cell">Entity</th>
+                        <th class="d-none d-lg-table-cell">Details</th>
+                        <th class="d-none d-xl-table-cell">IP</th>
+                    </tr>
                 </thead>
                 <tbody>
                 {% for log in logs %}
                 <tr>
-                    <td class="text-nowrap">{{ log.created_at.strftime('%d %b %H:%M:%S') }}</td>
-                    <td>{{ log.user.username if log.user else '—' }}</td>
-                    <td><span class="badge bg-secondary">{{ log.action }}</span></td>
-                    <td>{{ log.entity_type or '' }} {% if log.entity_id %}#{{ log.entity_id }}{% endif %}</td>
-                    <td><small class="text-muted">{{ log.details | tojson if log.details else '—' }}</small></td>
-                    <td><small>{{ log.ip_address or '—' }}</small></td>
+                    <td class="text-nowrap text-muted small">{{ log.created_at.strftime('%d %b %H:%M:%S') }}</td>
+                    <td><code class="small">{{ log.user.username if log.user else '—' }}</code></td>
+                    <td>
+                        {% set action_color = {
+                            'LOGIN': 'success', 'LOGOUT': 'secondary',
+                            'CREATE_PROPOSAL': 'primary', 'GENERATE_PROPOSAL': 'info',
+                            'DELETE_PROPOSAL': 'danger', 'EDIT_TEMPLATE': 'warning'
+                        } %}
+                        <span class="badge bg-{{ action_color.get(log.action, 'secondary') }}" style="font-size:0.7rem;">
+                            {{ log.action }}
+                        </span>
+                    </td>
+                    <td class="d-none d-md-table-cell text-muted small">
+                        {{ log.entity_type or '' }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        <small class="text-muted">{{ log.details | tojson if log.details else '—' }}</small>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <small class="text-muted">{{ log.ip_address or '—' }}</small>
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
+        {% if not logs %}
+        <div class="empty-state">
+            <i class="bi bi-journal-x d-block"></i>
+            <p>No audit entries yet.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
