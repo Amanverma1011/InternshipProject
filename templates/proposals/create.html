@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if edit_mode else 'New' }} Proposal – Sologix{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="bi bi-{{ 'pencil' if edit_mode else 'plus-circle' }} me-2 text-success"></i>
+        {{ 'Edit' if edit_mode else 'New' }} Proposal
+        {% if edit_mode and proposal %}<small class="text-muted fs-5">{{ proposal.proposal_number }}</small>{% endif %}
+    </h2>
+    <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Back
+    </a>
+</div>
+
+<form method="post" id="proposalForm"
+      action="{{ url_for('proposals.edit', proposal_id=proposal.id) if edit_mode else url_for('proposals.create') }}">
+
+<!-- Live calculation summary bar -->
+<div class="card border-0 shadow-sm mb-4 bg-light">
+    <div class="card-body py-2">
+        <div class="row text-center g-2">
+            <div class="col"><small class="text-muted d-block">Area (sq.ft)</small><strong id="liveArea">—</strong></div>
+            <div class="col"><small class="text-muted d-block">Inverter</small><strong id="liveInverter">—</strong></div>
+            <div class="col"><small class="text-muted d-block">Subtotal</small><strong id="liveSubtotal">—</strong></div>
+            <div class="col"><small class="text-muted d-block">Discount</small><strong id="liveDiscount">—</strong></div>
+            <div class="col"><small class="text-muted d-block fs-6">Grand Total</small><strong id="liveGrandTotal" class="text-success fs-5">—</strong></div>
+            <div class="col"><small class="text-muted d-block">Payment Total</small><strong id="livePaymentTotal" class="text-primary">—</strong></div>
+            <div class="col-auto"><span id="paymentMatch" class="badge fs-6 bg-secondary">—</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+<!-- LEFT COLUMN -->
+<div class="col-lg-8">
+
+<!-- Section 1: Customer -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white"><i class="bi bi-person me-2"></i>Customer Details</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label required">Customer Name</label>
+                <input type="text" name="customer_name" class="form-control" required
+                       value="{{ form_data.customer_name if form_data else '' }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Contact Number</label>
+                <input type="text" name="customer_contact" class="form-control"
+                       value="{{ form_data.customer_contact if form_data else '' }}">
+            </div>
+            <div class="col-12">
+                <label class="form-label required">Address</label>
+                <textarea name="customer_address" class="form-control" rows="2" required>{{ form_data.customer_address if form_data else '' }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: System -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white"><i class="bi bi-lightning me-2"></i>System Details</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label required">System Type</label>
+                <select name="system_type" id="systemType" class="form-select" required>
+                    {% for st in system_types %}
+                    <option value="{{ st }}" {{ 'selected' if (form_data.system_type if form_data else '') == st }}>{{ st }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label required">Plant Capacity (kW)</label>
+                <input type="number" name="plant_capacity" id="plantCapacity" class="form-control"
+                       step="0.01" min="0.01" required
+                       value="{{ form_data.plant_capacity if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Mounting Type</label>
+                <select name="mounting_type" class="form-select">
+                    {% for mt in mounting_types %}
+                    <option value="{{ mt }}" {{ 'selected' if (form_data.mounting_type if form_data else '') == mt }}>{{ mt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Total Area (sq.ft) <small class="text-muted">auto</small></label>
+                <input type="text" id="totalAreaDisplay" class="form-control" readonly
+                       value="{{ form_data.total_area if form_data else '' }}" placeholder="Calculated automatically">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Inverter Capacity <small class="text-muted">auto</small></label>
+                <input type="text" id="inverterDisplay" class="form-control" readonly
+                       value="{{ form_data.inverter_capacity if form_data else '' }}" placeholder="= Plant capacity">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Modules -->
+{% set dcr_mod = (modules | selectattr('module_type','equalto','DCR') | list | first) if modules else none %}
+{% set ndcr_mod = (modules | selectattr('module_type','equalto','NDCR') | list | first) if modules else none %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white"><i class="bi bi-grid me-2"></i>Module Details</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">DCR Modules (580W-620W) – Qty</label>
+                <input type="number" name="dcr_quantity" class="form-control" min="0"
+                       value="{{ dcr_mod.quantity if dcr_mod else 0 }}">
+                <div class="form-text">Rayzon/Premier Energy/RenewSys/Pahal/Adani/TATA Power</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">NDCR Modules (580W-620W) – Qty</label>
+                <input type="number" name="ndcr_quantity" class="form-control" min="0"
+                       value="{{ ndcr_mod.quantity if ndcr_mod else 0 }}">
+                <div class="form-text">Rayzon/Premier Energy/RenewSys/Pahal/Adani/TATA Power</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 4: Battery (Hybrid only) -->
+<div class="card border-0 shadow-sm mb-4" id="batterySection" style="display:none;">
+    <div class="card-header bg-warning text-dark"><i class="bi bi-battery-charging me-2"></i>Battery (Hybrid)</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Capacity (kWh)</label>
+                <input type="number" name="battery_capacity_kwh" class="form-control" step="0.01" min="0"
+                       value="{{ battery.capacity_kwh if battery else 5 }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="battery_quantity" class="form-control" min="1"
+                       value="{{ battery.quantity if battery else 1 }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Make (optional)</label>
+                <input type="text" name="battery_make" class="form-control"
+                       value="{{ battery.make if battery else '' }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 5: Commercial -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white"><i class="bi bi-currency-rupee me-2"></i>Commercial Offer</div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="form-label required">Base Price (₹ incl. GST)</label>
+                <input type="number" name="base_price" id="basePrice" class="form-control"
+                       step="0.01" min="0" required
+                       value="{{ form_data.base_price if form_data else '' }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Discount (%)</label>
+                <input type="number" name="discount_percent" id="discountPercent" class="form-control"
+                       step="0.01" min="0" max="100" value="{{ form_data.discount_percent if form_data else '0' }}">
+            </div>
+        </div>
+
+        <!-- Add-ons -->
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Add-ons</label>
+            <div id="addonsContainer">
+                {% if addons %}
+                {% for a in addons %}
+                <div class="row g-2 mb-2 addon-row">
+                    <div class="col-7"><input type="text" name="addon_name" class="form-control" placeholder="Add-on name" value="{{ a.name }}"></div>
+                    <div class="col-4"><input type="number" name="addon_amount" class="form-control addon-amount" placeholder="₹ Amount" step="0.01" min="0" value="{{ a.amount }}"></div>
+                    <div class="col-1"><button type="button" class="btn btn-outline-danger btn-sm w-100 remove-addon"><i class="bi bi-x"></i></button></div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <button type="button" id="addAddonBtn" class="btn btn-outline-success btn-sm mt-1">
+                <i class="bi bi-plus me-1"></i>Add Add-on
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Section 6: Payment Terms -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white"><i class="bi bi-receipt me-2"></i>Payment Terms</div>
+    <div class="card-body">
+        <div id="paymentsContainer">
+            {% if payments %}
+            {% for p in payments %}
+            <div class="row g-2 mb-2 payment-row">
+                <div class="col-7"><input type="text" name="payment_milestone" class="form-control" placeholder="Milestone (e.g. Signing of Proposal)" value="{{ p.milestone }}"></div>
+                <div class="col-4"><input type="number" name="payment_amount" class="form-control payment-amount" placeholder="₹ Amount" step="0.01" min="0" value="{{ p.amount }}"></div>
+                <div class="col-1"><button type="button" class="btn btn-outline-danger btn-sm w-100 remove-payment"><i class="bi bi-x"></i></button></div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="row g-2 mb-2 payment-row">
+                <div class="col-7"><input type="text" name="payment_milestone" class="form-control" placeholder="Signing of Proposal"></div>
+                <div class="col-4"><input type="number" name="payment_amount" class="form-control payment-amount" placeholder="₹ Amount" step="0.01" min="0"></div>
+                <div class="col-1"><button type="button" class="btn btn-outline-danger btn-sm w-100 remove-payment"><i class="bi bi-x"></i></button></div>
+            </div>
+            {% endif %}
+        </div>
+        <button type="button" id="addPaymentBtn" class="btn btn-outline-success btn-sm mt-1">
+            <i class="bi bi-plus me-1"></i>Add Payment Stage
+        </button>
+        <div id="paymentWarning" class="alert alert-danger mt-2 d-none">
+            <i class="bi bi-exclamation-triangle me-2"></i>Payment total must equal Grand Total to generate PDF.
+        </div>
+    </div>
+</div>
+
+</div><!-- end left col -->
+
+<!-- RIGHT COLUMN: Summary -->
+<div class="col-lg-4">
+    <div class="card border-0 shadow-sm sticky-top" style="top:80px;">
+        <div class="card-header bg-dark text-white"><i class="bi bi-calculator me-2"></i>Calculation Summary</div>
+        <div class="card-body">
+            <table class="table table-sm">
+                <tr><td>Plant Capacity</td><td class="text-end fw-bold" id="sumCapacity">—</td></tr>
+                <tr><td>Total Area</td><td class="text-end" id="sumArea">—</td></tr>
+                <tr><td>Inverter</td><td class="text-end" id="sumInverter">—</td></tr>
+                <tr class="border-top"><td>Base Price</td><td class="text-end" id="sumBase">—</td></tr>
+                <tr><td>Add-ons Total</td><td class="text-end" id="sumAddons">—</td></tr>
+                <tr><td>Subtotal</td><td class="text-end fw-bold" id="sumSubtotal">—</td></tr>
+                <tr><td>Discount</td><td class="text-end text-danger" id="sumDiscount">—</td></tr>
+                <tr class="border-top table-success"><td><strong>Grand Total</strong></td><td class="text-end fw-bold" id="sumGrandTotal">—</td></tr>
+                <tr class="border-top"><td>Payment Total</td><td class="text-end" id="sumPaymentTotal">—</td></tr>
+                <tr><td>Difference</td><td class="text-end" id="sumDiff">—</td></tr>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-success w-100 btn-lg">
+                <i class="bi bi-save me-2"></i>Save Draft
+            </button>
+        </div>
+    </div>
+</div>
+
+</div><!-- end row -->
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/proposal.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const systemType = document.getElementById('systemType');
+    const batterySection = document.getElementById('batterySection');
+
+    function toggleBattery() {
+        batterySection.style.display = systemType.value === 'HYBRID' ? 'block' : 'none';
+    }
+    systemType.addEventListener('change', toggleBattery);
+    toggleBattery();
+
+    // Initialize calculator
+    ProposalCalc.init();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Preview — {{ proposal.proposal_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h4 class="fw-bold">Preview: {{ proposal.proposal_number }}</h4>
+    <a href="{{ url_for('proposals.detail', proposal_id=proposal.id) }}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="alert alert-info">This is a preview. Generate PDF for the official document.</div>
+{% endblock %}

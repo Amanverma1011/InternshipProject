@@ -1,0 +1,74 @@
+:root {
+  --sologix-green: #2e7d32;
+  --sologix-light: #e8f5e9;
+}
+
+.bg-sologix { background-color: var(--sologix-green) !important; }
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.quota-display {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.quota-used { color: #2e7d32; }
+.quota-sep { color: #999; }
+.quota-total { color: #555; }
+
+/* Required field indicator */
+label.required::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+/* Card hover effect */
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; transition: box-shadow 0.2s; }
+
+/* Table rows */
+.table-hover tbody tr:hover { background-color: #f0f7f0; }
+
+/* Form control focus */
+.form-control:focus, .form-select:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.15);
+}
+
+/* Primary button override */
+.btn-success {
+  background-color: var(--sologix-green);
+  border-color: var(--sologix-green);
+}
+.btn-success:hover {
+  background-color: #1b5e20;
+  border-color: #1b5e20;
+}
+.btn-outline-success {
+  color: var(--sologix-green);
+  border-color: var(--sologix-green);
+}
+.btn-outline-success:hover {
+  background-color: var(--sologix-green);
+  border-color: var(--sologix-green);
+}
+
+/* Proposal form section headings */
+.card-header.bg-success { font-size: 0.9rem; letter-spacing: 0.03em; }
+
+/* Sticky sidebar */
+@media (max-width: 991px) {
+  .sticky-top { position: relative !important; top: 0 !important; }
+}
