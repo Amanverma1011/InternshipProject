@@ -21,7 +21,7 @@ class Config:
     STORAGE_PATH = os.environ.get('STORAGE_PATH', 'storage/proposals')
     PDF_TIMEOUT = int(os.environ.get('PDF_TIMEOUT', '30000'))
     MAX_PROPOSALS_PER_DAY = 10
-    WTF_CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = False
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
