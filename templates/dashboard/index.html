@@ -1,114 +1,112 @@
 {% extends "base.html" %}
 {% block title %}Dashboard – Sologix{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-speedometer2 me-2 text-success"></i>Dashboard</h2>
-    <a href="{{ url_for('proposals.create') }}" class="btn btn-success btn-lg">
-        <i class="bi bi-plus-circle me-2"></i>Create Proposal
+<div class="page-header">
+    <h2><i class="bi bi-speedometer2 me-2 text-success"></i>Dashboard</h2>
+    <a href="{{ url_for('proposals.create') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle me-1"></i>New Proposal
     </a>
 </div>
 
 {% if is_master %}
-<!-- MASTER Dashboard -->
+<!-- MASTER stats -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-primary">{{ total }}</div>
-                <div class="stat-label">Total Proposals</div>
+                <div class="stat-label">Total</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-success">{{ accepted }}</div>
                 <div class="stat-label">Accepted</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-danger">{{ rejected }}</div>
                 <div class="stat-label">Rejected</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-info">{{ total_users }}</div>
-                <div class="stat-label">Total Users</div>
+                <div class="stat-label">Users</div>
             </div>
         </div>
     </div>
-</div>
-<div class="row g-3 mb-4">
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
+    <div class="col-6">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-3">
                 <div class="stat-number text-warning">{{ today_generated }}</div>
-                <div class="stat-label">Proposals Generated Today</div>
+                <div class="stat-label">Generated Today</div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
+    <div class="col-6">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-3">
                 <div class="stat-number text-secondary">{{ generated }}</div>
-                <div class="stat-label">Currently Generated (Pending)</div>
+                <div class="stat-label">Pending</div>
             </div>
         </div>
     </div>
 </div>
 
 {% else %}
-<!-- USER Dashboard -->
+<!-- USER stats -->
 <div class="row g-3 mb-4">
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-sm-5 col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body text-center">
+            <div class="card-body py-3 text-center">
                 <div class="quota-display">
                     <span class="quota-used">{{ quota_used }}</span>
                     <span class="quota-sep"> / </span>
                     <span class="quota-total">{{ quota_total }}</span>
                 </div>
-                <div class="stat-label">Proposals Used Today</div>
-                <div class="progress mt-2" style="height:8px;">
+                <div class="stat-label mt-1">Proposals Today</div>
+                <div class="progress mt-2" style="height:6px;border-radius:3px;">
                     <div class="progress-bar bg-success" style="width:{{ (quota_used/quota_total*100)|int }}%"></div>
                 </div>
-                <small class="text-muted">{{ quota_remaining }} remaining today</small>
+                <small class="text-muted d-block mt-1">{{ quota_remaining }} remaining</small>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-primary">{{ total }}</div>
                 <div class="stat-label">Total</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-success">{{ accepted }}</div>
                 <div class="stat-label">Accepted</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-danger">{{ rejected }}</div>
                 <div class="stat-label">Rejected</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body py-3">
                 <div class="stat-number text-secondary">{{ generated }}</div>
                 <div class="stat-label">Generated</div>
             </div>
@@ -119,49 +117,60 @@
 
 <!-- Recent Proposals -->
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Recent Proposals</h5>
-        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-sm btn-outline-success">View All</a>
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+        <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-success"></i>Recent Proposals</h6>
+        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-sm btn-outline-success">
+            View All <i class="bi bi-arrow-right ms-1"></i>
+        </a>
     </div>
     <div class="card-body p-0">
         {% if recent %}
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>Proposal #</th>
                         <th>Customer</th>
-                        <th>Type</th>
-                        <th>Capacity</th>
-                        <th>Grand Total</th>
+                        <th class="d-none d-md-table-cell">Type</th>
+                        <th class="d-none d-sm-table-cell">kWp</th>
+                        <th>Total</th>
                         <th>Status</th>
-                        <th>Date</th>
+                        <th class="d-none d-lg-table-cell">Date</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for p in recent %}
+                {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
                 <tr>
-                    <td><code>{{ p.proposal_number }}</code></td>
-                    <td>{{ p.customer_name }}</td>
-                    <td><span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning' }} text-dark">{{ p.system_type }}</span></td>
-                    <td>{{ p.plant_capacity }} kW</td>
-                    <td>₹{{ "{:,.0f}".format(p.grand_total) }}</td>
+                    <td><code class="text-success small">{{ p.proposal_number }}</code></td>
                     <td>
-                        {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
-                        <span class="badge bg-{{ sc.get(p.status,'secondary') }}">{{ p.status }}</span>
+                        <span class="fw-semibold">{{ p.customer_name }}</span>
+                        <span class="d-inline d-md-none ms-1">
+                            <span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning text-dark' }}" style="font-size:0.6rem;">{{ p.system_type }}</span>
+                        </span>
                     </td>
-                    <td>{{ p.proposal_date.strftime('%d %b %Y') if p.proposal_date else '—' }}</td>
-                    <td><a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">View</a></td>
+                    <td class="d-none d-md-table-cell">
+                        <span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning text-dark' }}">{{ p.system_type }}</span>
+                    </td>
+                    <td class="d-none d-sm-table-cell">{{ p.plant_capacity }}</td>
+                    <td>₹{{ "{:,.0f}".format(p.grand_total) }}</td>
+                    <td><span class="badge bg-{{ sc.get(p.status,'secondary') }}">{{ p.status }}</span></td>
+                    <td class="d-none d-lg-table-cell text-muted small">{{ p.proposal_date.strftime('%d %b %Y') if p.proposal_date else '—' }}</td>
+                    <td>
+                        <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-eye d-none d-sm-inline"></i> View
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-        <div class="text-center py-5 text-muted">
-            <i class="bi bi-file-earmark-plus" style="font-size:3rem;"></i>
-            <p class="mt-2">No proposals yet. <a href="{{ url_for('proposals.create') }}">Create your first proposal</a>.</p>
+        <div class="empty-state">
+            <i class="bi bi-file-earmark-plus d-block"></i>
+            <p>No proposals yet. <a href="{{ url_for('proposals.create') }}" class="text-success fw-semibold">Create your first one</a>.</p>
         </div>
         {% endif %}
     </div>

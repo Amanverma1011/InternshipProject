@@ -1,74 +1,166 @@
 :root {
-  --sologix-green: #2e7d32;
-  --sologix-light: #e8f5e9;
+  --sg-green: #2e7d32;
+  --sg-green-dark: #1b5e20;
+  --sg-green-light: #e8f5e9;
+  --sg-green-mid: #388e3c;
+  --sg-border: #dee2e6;
+  --sg-text-muted: #6c757d;
+  --sg-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
-.bg-sologix { background-color: var(--sologix-green) !important; }
+/* ── Navbar ── */
+.bg-sologix { background-color: var(--sg-green) !important; }
 
-.stat-number {
-  font-size: 2.2rem;
+.avatar-circle {
+  width: 30px;
+  height: 30px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
-  line-height: 1;
+  font-size: 0.85rem;
+  color: #fff;
+  flex-shrink: 0;
 }
 
-.stat-label {
-  font-size: 0.8rem;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-top: 4px;
+.navbar-dark .nav-link {
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link:focus {
+  background: rgba(255,255,255,0.12);
 }
 
-.quota-display {
+/* ── Layout ── */
+.main-content { max-width: 1400px; margin: 0 auto; }
+
+/* ── Cards ── */
+.card {
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.10) !important; }
+.card-header {
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  font-weight: 600;
+}
+
+/* ── Stat tiles ── */
+.stat-number {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -1px;
 }
-
-.quota-used { color: #2e7d32; }
-.quota-sep { color: #999; }
-.quota-total { color: #555; }
-
-/* Required field indicator */
-label.required::after {
-  content: ' *';
-  color: #dc3545;
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--sg-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
 }
+.quota-display { font-size: 2rem; font-weight: 700; line-height: 1; }
+.quota-used   { color: var(--sg-green); }
+.quota-sep    { color: #bbb; }
+.quota-total  { color: #555; }
 
-/* Card hover effect */
-.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; transition: box-shadow 0.2s; }
+/* ── Tables ── */
+.table-hover tbody tr:hover { background-color: #f3faf3; }
+.table th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: #555; font-weight: 600; }
+.table td { vertical-align: middle; }
+.table-responsive { border-radius: 0 0 0.75rem 0.75rem; overflow: hidden; }
 
-/* Table rows */
-.table-hover tbody tr:hover { background-color: #f0f7f0; }
-
-/* Form control focus */
+/* ── Forms ── */
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
 .form-control:focus, .form-select:focus {
-  border-color: #2e7d32;
-  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.15);
+  border-color: var(--sg-green);
+  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.18);
 }
+label { font-size: 0.85rem; font-weight: 600; color: #444; }
+label.required::after { content: ' *'; color: #dc3545; }
 
-/* Primary button override */
+/* ── Buttons ── */
+.btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; }
 .btn-success {
-  background-color: var(--sologix-green);
-  border-color: var(--sologix-green);
+  background-color: var(--sg-green);
+  border-color: var(--sg-green);
 }
 .btn-success:hover {
-  background-color: #1b5e20;
-  border-color: #1b5e20;
+  background-color: var(--sg-green-dark);
+  border-color: var(--sg-green-dark);
 }
 .btn-outline-success {
-  color: var(--sologix-green);
-  border-color: var(--sologix-green);
+  color: var(--sg-green);
+  border-color: var(--sg-green);
 }
 .btn-outline-success:hover {
-  background-color: var(--sologix-green);
-  border-color: var(--sologix-green);
+  background-color: var(--sg-green);
+  border-color: var(--sg-green);
 }
 
-/* Proposal form section headings */
-.card-header.bg-success { font-size: 0.9rem; letter-spacing: 0.03em; }
+/* ── Badges ── */
+.badge { border-radius: 4px; font-weight: 600; letter-spacing: 0.03em; }
 
-/* Sticky sidebar */
+/* ── Page headings ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.page-header h2 { margin: 0; font-size: 1.3rem; font-weight: 700; }
+
+/* ── Section card headers ── */
+.card-header.section-header {
+  background: var(--sg-green-light);
+  color: var(--sg-green-dark);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  padding: 0.6rem 1rem;
+}
+
+/* ── Proposal form ── */
+.card-header.bg-success { font-size: 0.82rem; letter-spacing: 0.04em; }
+.form-section { background: #fff; border-radius: 0.75rem; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--sg-text-muted);
+}
+.empty-state i { font-size: 3rem; opacity: 0.4; }
+.empty-state p { margin-top: 0.75rem; }
+
+/* ── Alerts ── */
+.alert { border-radius: 0.6rem; border: none; }
+
+/* ── Dropdown ── */
+.dropdown-menu {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.dropdown-item { font-size: 0.875rem; }
+
+/* ── Sticky sidebar ── */
 @media (max-width: 991px) {
   .sticky-top { position: relative !important; top: 0 !important; }
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 576px) {
+  .main-content { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+  .stat-number { font-size: 1.6rem; }
+  h2.mb-0, .page-header h2 { font-size: 1.1rem; }
+  .card-body { padding: 0.85rem !important; }
+  .btn-lg { font-size: 0.9rem; padding: 0.5rem 1rem; }
 }

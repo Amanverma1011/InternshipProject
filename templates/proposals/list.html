@@ -1,49 +1,59 @@
 {% extends "base.html" %}
 {% block title %}Proposals – Sologix{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0"><i class="bi bi-file-text me-2 text-success"></i>Proposals</h2>
+<div class="page-header">
+    <h2><i class="bi bi-file-text me-2 text-success"></i>Proposals</h2>
     <a href="{{ url_for('proposals.create') }}" class="btn btn-success">
-        <i class="bi bi-plus-circle me-2"></i>New Proposal
+        <i class="bi bi-plus-circle me-1"></i>New Proposal
     </a>
 </div>
+
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         {% if proposals %}
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>Proposal #</th>
                         <th>Customer</th>
-                        <th>System</th>
-                        <th>Capacity</th>
-                        <th>Grand Total</th>
+                        <th class="d-none d-md-table-cell">System</th>
+                        <th class="d-none d-sm-table-cell">kWp</th>
+                        <th>Total</th>
                         <th>Status</th>
-                        <th>Date</th>
-                        {% if current_user.is_master() %}<th>Created By</th>{% endif %}
+                        <th class="d-none d-lg-table-cell">Date</th>
+                        {% if current_user.is_master() %}<th class="d-none d-xl-table-cell">Created By</th>{% endif %}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for p in proposals %}
+                {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
                 <tr>
-                    <td><code class="text-success">{{ p.proposal_number }}</code></td>
-                    <td>{{ p.customer_name }}</td>
-                    <td><span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning text-dark' }}">{{ p.system_type }}</span></td>
-                    <td>{{ p.plant_capacity }} kW</td>
-                    <td>₹{{ "{:,.0f}".format(p.grand_total) }}</td>
+                    <td><code class="text-success small">{{ p.proposal_number }}</code></td>
                     <td>
-                        {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
-                        <span class="badge bg-{{ sc.get(p.status,'secondary') }}">{{ p.status }}</span>
+                        <span class="fw-semibold">{{ p.customer_name }}</span>
+                        <span class="d-inline d-md-none ms-1">
+                            <span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning text-dark' }}" style="font-size:0.6rem;">{{ p.system_type }}</span>
+                        </span>
                     </td>
-                    <td>{{ p.proposal_date.strftime('%d %b %Y') if p.proposal_date else '—' }}</td>
-                    {% if current_user.is_master() %}<td>{{ p.creator.name if p.creator else '—' }}</td>{% endif %}
+                    <td class="d-none d-md-table-cell">
+                        <span class="badge bg-{{ 'primary' if p.system_type=='ONGRID' else 'warning text-dark' }}">{{ p.system_type }}</span>
+                    </td>
+                    <td class="d-none d-sm-table-cell">{{ p.plant_capacity }}</td>
+                    <td>₹{{ "{:,.0f}".format(p.grand_total) }}</td>
+                    <td><span class="badge bg-{{ sc.get(p.status,'secondary') }}">{{ p.status }}</span></td>
+                    <td class="d-none d-lg-table-cell text-muted small">{{ p.proposal_date.strftime('%d %b %Y') if p.proposal_date else '—' }}</td>
+                    {% if current_user.is_master() %}
+                    <td class="d-none d-xl-table-cell text-muted small">{{ p.creator.name if p.creator else '—' }}</td>
+                    {% endif %}
                     <td>
-                        <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-success">View</a>
-                        {% if p.status == 'DRAFT' %}
-                        <a href="{{ url_for('proposals.edit', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        {% endif %}
+                        <div class="d-flex gap-1 flex-nowrap">
+                            <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-success">View</a>
+                            {% if p.status == 'DRAFT' %}
+                            <a href="{{ url_for('proposals.edit', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -51,9 +61,9 @@
             </table>
         </div>
         {% else %}
-        <div class="text-center py-5 text-muted">
-            <i class="bi bi-file-earmark-plus" style="font-size:3rem;"></i>
-            <p class="mt-2">No proposals found. <a href="{{ url_for('proposals.create') }}">Create one now</a>.</p>
+        <div class="empty-state">
+            <i class="bi bi-file-earmark-plus d-block"></i>
+            <p>No proposals found. <a href="{{ url_for('proposals.create') }}" class="text-success fw-semibold">Create one now</a>.</p>
         </div>
         {% endif %}
     </div>
