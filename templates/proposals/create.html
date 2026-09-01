@@ -14,6 +14,7 @@
 
 <form method="post" id="proposalForm"
       action="{{ url_for('proposals.edit', proposal_id=proposal.id) if edit_mode else url_for('proposals.create') }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
 <!-- Live calculation summary bar -->
 <div class="card border-0 shadow-sm mb-4 bg-light">

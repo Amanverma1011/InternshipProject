@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,25 +22,45 @@ class Config:
     STORAGE_PATH = os.environ.get('STORAGE_PATH', 'storage/proposals')
     PDF_TIMEOUT = int(os.environ.get('PDF_TIMEOUT', '30000'))
     MAX_PROPOSALS_PER_DAY = 10
-    WTF_CSRF_ENABLED = False
+
+    # CSRF
+    WTF_CSRF_ENABLED = True
+    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour token validity
+
+    # Session/cookie security
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = 'Lax'
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    WTF_CSRF_ENABLED = False
+    SESSION_COOKIE_SECURE = False
+    REMEMBER_COOKIE_SECURE = False
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SESSION_COOKIE_SECURE = False
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+
+    @classmethod
+    def validate(cls):
+        key = os.environ.get('SECRET_KEY', '')
+        if not key or key == 'dev-secret-key-change-in-production':
+            sys.exit('FATAL: SECRET_KEY env var not set or is default. Set a strong random key.')
+        if not os.environ.get('DB_PASSWORD'):
+            sys.exit('FATAL: DB_PASSWORD env var not set.')
+
+    # Set SESSION_COOKIE_SECURE=true in .env only after HTTPS is configured
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
+    REMEMBER_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
 
 
 config_map = {
@@ -51,4 +72,7 @@ config_map = {
 
 def get_config():
     env = os.environ.get('FLASK_ENV', 'development')
-    return config_map.get(env, DevelopmentConfig)
+    cfg = config_map.get(env, DevelopmentConfig)
+    if env == 'production' and hasattr(cfg, 'validate'):
+        cfg.validate()
+    return cfg

@@ -27,6 +27,7 @@
             Incorrect HTML may break PDF generation.
         </div>
         <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <textarea name="html_content" id="htmlEditor"
                           class="form-control font-monospace small"

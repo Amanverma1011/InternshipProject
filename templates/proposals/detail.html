@@ -204,6 +204,7 @@
             {% endif %}
         </p>
         <form method="post" action="{{ url_for('proposals.generate', proposal_id=proposal.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-success w-100">
                 <i class="bi bi-file-earmark-pdf me-2"></i>Generate PDF
             </button>
@@ -220,6 +221,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('proposals.accept', proposal_id=proposal.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <label class="form-label small">Notes <span class="text-muted">(optional)</span></label>
                 <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Any remarks..."></textarea>
@@ -239,6 +241,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('proposals.reject', proposal_id=proposal.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <label class="form-label small">Reason <span class="text-danger">*</span></label>
                 <textarea name="reason" class="form-control form-control-sm" rows="2" required placeholder="Reason for rejection..."></textarea>

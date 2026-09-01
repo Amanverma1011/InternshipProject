@@ -44,6 +44,7 @@
                         {% if u.id != current_user.id %}
                         <div class="d-flex gap-1 flex-wrap">
                             <form method="post" action="{{ url_for('users.toggle_user', user_id=u.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button class="btn btn-sm btn-{{ 'warning' if u.is_active else 'success' }}"
                                         onclick="return confirm('{{ 'Disable' if u.is_active else 'Enable' }} {{ u.name }}?')">
                                     {{ 'Disable' if u.is_active else 'Enable' }}
@@ -69,6 +70,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form method="post" action="{{ url_for('users.reset_password', user_id=u.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <div class="modal-body">
                                     <label class="form-label fw-semibold">New Password <span class="text-danger">*</span></label>
                                     <input type="password" name="new_password" class="form-control" required minlength="6"

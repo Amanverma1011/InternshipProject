@@ -1,8 +1,14 @@
 import os
 import logging
-from flask import Flask
+from flask import Flask, request, g
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from models import db, login_manager
 from config import get_config
+
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address, default_limits=[])
 
 
 def create_app(config_class=None):
@@ -20,6 +26,8 @@ def create_app(config_class=None):
 
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
+    limiter.init_app(app)
 
     # Import all models to register them with SQLAlchemy
     from models.user import User
@@ -45,6 +53,16 @@ def create_app(config_class=None):
     app.register_blueprint(users_bp)
     app.register_blueprint(templates_bp)
 
+    # Security headers on every response
+    @app.after_request
+    def set_security_headers(response):
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+        return response
+
     # Ensure storage exists
     os.makedirs(app.config.get('STORAGE_PATH', 'storage/proposals'), exist_ok=True)
 
@@ -55,4 +73,5 @@ if __name__ == '__main__':
     app = create_app()
     with app.app_context():
         db.create_all()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Never run with debug=True in production — use gunicorn
+    app.run(host='127.0.0.1', port=5000, debug=False)
