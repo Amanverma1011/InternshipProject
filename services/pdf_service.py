@@ -27,9 +27,9 @@ def get_storage_path() -> Path:
 
 def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str, Optional[str]]:
     try:
-        from weasyprint import HTML as WeasyprintHTML
+        from xhtml2pdf import pisa
     except ImportError:
-        return False, 'WeasyPrint not installed. Run: pip install weasyprint', None
+        return False, 'xhtml2pdf not installed. Run: pip install xhtml2pdf', None
 
     company = CompanySetting.get_all_dict()
     snapshot = build_snapshot(proposal, company)
@@ -44,6 +44,7 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
 
     html_template = f'pdf/{proposal.system_type.lower()}.html'
 
+    letterhead_path = os.path.join(current_app.root_path, 'static', 'images', 'letterhead.png')
     try:
         html_content = render_template(
             html_template,
@@ -70,10 +71,19 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
     file_path = output_dir / file_name
 
     try:
-        WeasyprintHTML(string=html_content).write_pdf(str(file_path))
+        with open(str(file_path), 'wb') as pdf_file:
+            result = pisa.CreatePDF(html_content, dest=pdf_file, encoding='utf-8')
+        if result.err:
+            return False, f'PDF generation failed: {result.err} errors', None
     except Exception as e:
-        logger.error(f'WeasyPrint PDF error: {e}')
+        logger.error(f'xhtml2pdf error: {e}')
         return False, f'PDF generation failed: {str(e)}', None
+
+    if os.path.exists(letterhead_path):
+        try:
+            _stamp_letterhead(str(file_path), letterhead_path)
+        except Exception as e:
+            logger.warning(f'Letterhead stamp failed (PDF still saved): {e}')
 
     sha256 = _file_sha256(str(file_path))
     file_size = os.path.getsize(str(file_path))
@@ -115,6 +125,33 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
         db.session.rollback()
         logger.error(f'DB save after PDF error: {e}')
         return False, f'Database error: {str(e)}', None
+
+
+def _stamp_letterhead(pdf_path: str, letterhead_path: str) -> None:
+    """Overlay letterhead PNG as background on every page of the PDF."""
+    import io
+    from reportlab.pdfgen import canvas as rl_canvas
+    from reportlab.lib.pagesizes import A4
+    from pypdf import PdfWriter, PdfReader
+
+    # Build a single-page letterhead PDF in memory
+    buf = io.BytesIO()
+    c = rl_canvas.Canvas(buf, pagesize=A4)
+    c.drawImage(letterhead_path, 0, 0, width=A4[0], height=A4[1], preserveAspectRatio=False)
+    c.save()
+
+    content_reader = PdfReader(pdf_path)
+    writer = PdfWriter()
+
+    for content_page in content_reader.pages:
+        # Fresh letterhead reader each iteration so we get an independent page object
+        buf.seek(0)
+        lh_page = PdfReader(buf).pages[0]
+        lh_page.merge_page(content_page)   # content sits on top of letterhead
+        writer.add_page(lh_page)
+
+    with open(pdf_path, 'wb') as f:
+        writer.write(f)
 
 
 def _file_sha256(path: str) -> str:
