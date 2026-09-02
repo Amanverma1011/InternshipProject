@@ -36,6 +36,9 @@ MASTER_PASS="${MASTER_PASSWORD:-$(python3 -c "import secrets; print(secrets.toke
 MASTER_USER="${MASTER_USERNAME:-master}"
 MASTER_NAME_VAL="${MASTER_NAME:-Sologix Admin}"
 
+echo ">>> Updating MySQL user password"
+mysql -u root -e "ALTER USER 'sologix_app'@'127.0.0.1' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
+
 echo ">>> Writing .env"
 cat > "$APP_DIR/.env" << EOF
 FLASK_ENV=production
