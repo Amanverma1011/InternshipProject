@@ -1,15 +1,19 @@
 :root {
-  --sg-green: #2e7d32;
+  --sg-primary: #E8631A;
+  --sg-primary-dark: #C4500F;
+  --sg-primary-light: #FEF0E7;
+  --sg-green: #2d7d32;
   --sg-green-dark: #1b5e20;
   --sg-green-light: #e8f5e9;
   --sg-green-mid: #388e3c;
+  --sg-navy: #1A3A6B;
   --sg-border: #dee2e6;
   --sg-text-muted: #6c757d;
   --sg-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 /* ── Navbar ── */
-.bg-sologix { background-color: var(--sg-green) !important; }
+.bg-sologix { background: linear-gradient(135deg, #C4500F 0%, #E8631A 100%) !important; }
 
 .avatar-circle {
   width: 30px;
@@ -64,12 +68,12 @@
   margin-top: 4px;
 }
 .quota-display { font-size: 2rem; font-weight: 700; line-height: 1; }
-.quota-used   { color: var(--sg-green); }
+.quota-used   { color: var(--sg-primary); }
 .quota-sep    { color: #bbb; }
 .quota-total  { color: #555; }
 
 /* ── Tables ── */
-.table-hover tbody tr:hover { background-color: #f3faf3; }
+.table-hover tbody tr:hover { background-color: #fdf3ed; }
 .table th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: #555; font-weight: 600; }
 .table td { vertical-align: middle; }
 .table-responsive { border-radius: 0 0 0.75rem 0.75rem; overflow: hidden; }
@@ -80,8 +84,8 @@
   font-size: 0.9rem;
 }
 .form-control:focus, .form-select:focus {
-  border-color: var(--sg-green);
-  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.18);
+  border-color: var(--sg-primary);
+  box-shadow: 0 0 0 0.2rem rgba(232, 99, 26, 0.18);
 }
 label { font-size: 0.85rem; font-weight: 600; color: #444; }
 label.required::after { content: ' *'; color: #dc3545; }
@@ -89,20 +93,20 @@ label.required::after { content: ' *'; color: #dc3545; }
 /* ── Buttons ── */
 .btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; }
 .btn-success {
-  background-color: var(--sg-green);
-  border-color: var(--sg-green);
+  background-color: var(--sg-primary);
+  border-color: var(--sg-primary);
 }
 .btn-success:hover {
-  background-color: var(--sg-green-dark);
-  border-color: var(--sg-green-dark);
+  background-color: var(--sg-primary-dark);
+  border-color: var(--sg-primary-dark);
 }
 .btn-outline-success {
-  color: var(--sg-green);
-  border-color: var(--sg-green);
+  color: var(--sg-primary);
+  border-color: var(--sg-primary);
 }
 .btn-outline-success:hover {
-  background-color: var(--sg-green);
-  border-color: var(--sg-green);
+  background-color: var(--sg-primary);
+  border-color: var(--sg-primary);
 }
 
 /* ── Badges ── */
@@ -121,8 +125,8 @@ label.required::after { content: ' *'; color: #dc3545; }
 
 /* ── Section card headers ── */
 .card-header.section-header {
-  background: var(--sg-green-light);
-  color: var(--sg-green-dark);
+  background: var(--sg-primary-light);
+  color: var(--sg-primary-dark);
   font-size: 0.85rem;
   letter-spacing: 0.04em;
   padding: 0.6rem 1rem;
