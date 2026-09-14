@@ -5,38 +5,66 @@
 <style>
   @page { size: A4; margin: 38mm 14mm 28mm 14mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; font-size: 10pt; color: #222; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: #222; }
 
-  .section-heading { font-weight: bold; font-size: 10pt; color: #1a237e; margin: 10px 0 5px 0; border-bottom: 2px solid #2e7d32; padding-bottom: 2px; }
-  .proposal-title { font-size: 18pt; font-weight: bold; color: #1a237e; margin: 4px 0 2px 0; }
-  .proposal-date  { font-size: 10pt; color: #555; margin-bottom: 10px; }
+  .proposal-title {
+    font-size: 20pt; font-weight: bold; color: #1a237e;
+    text-align: center; text-decoration: underline;
+    margin: 4px 0 2px 0;
+  }
+  .proposal-date {
+    font-size: 12pt; color: #444;
+    text-align: center; margin-bottom: 10px;
+  }
+  .section-heading {
+    font-weight: bold; font-size: 15pt; color: #1a237e;
+    margin: 10px 0 5px 0; border-bottom: 2px solid #2e7d32;
+    padding-bottom: 0; text-align: left;
+  }
 
   table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-  th, td { border: 1px solid #bbb; padding: 5px 7px; font-size: 9pt; }
-  th { background: #e8f5e9; font-weight: bold; text-align: left; color: #1b5e20; }
+  th, td {
+    border: 1px solid #bbb; padding: 5px 8px;
+    font-size: 12pt; font-family: 'Times New Roman', Times, serif;
+    word-wrap: break-word; text-align: left;
+  }
+  th { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
   .td-center { text-align: center; }
   .td-right  { text-align: right; }
 
-  .scope-list  { padding-left: 18px; font-size: 9pt; line-height: 1.8; }
-  .commercial-heading { background: #2e7d32; color: white; padding: 4px 7px; font-weight: bold; }
-  .grand-total-row td { font-weight: bold; font-size: 10.5pt; background: #f0f0f0; }
-  .cfa-row td  { color: #2e7d32; font-weight: bold; }
-  .warranty-list { padding-left: 18px; font-size: 9pt; line-height: 1.8; }
-  .bank-table td:first-child { font-weight: bold; width: 45%; }
-  .acceptance-table td { height: 60px; vertical-align: top; padding: 8px; }
-  .accept-label { font-size: 8pt; color: #666; }
-  .bullet-note  { font-size: 9pt; margin: 3px 0; }
-  .battery-row  { background: #fff8e1; }
+  .scope-list  { padding-left: 20px; font-size: 12pt; line-height: 1.4; margin-bottom: 6px; }
+  .scope-list li { margin-bottom: 3px; text-align: justify; }
+
+  .commercial-heading {
+    background: #2e7d32; color: white;
+    padding: 5px 8px; font-weight: bold; text-align: left;
+  }
+  .grand-total-row td { font-weight: bold; font-size: 12pt; background: #f0f0f0; }
+  .cfa-row td { color: #2e7d32; font-weight: bold; }
+  .battery-row { background: #fff8e1; }
+
+  .warranty-list { padding-left: 20px; font-size: 12pt; line-height: 1.4; margin-bottom: 6px; }
+  .warranty-list li { margin-bottom: 3px; text-align: justify; }
+
+  .acceptance-table td { vertical-align: top; padding: 8px; }
+  .accept-label { font-size: 10pt; color: #555; }
+  .bullet-note { font-size: 12pt; margin: 4px 0; }
 </style>
 </head>
 <body>
 
 <div class="proposal-title">HYBRID Solar Plant &ndash; {{ proposal.plant_capacity }} kWp</div>
-<div class="proposal-date">{{ proposal.proposal_date.strftime('%d %B %Y') if proposal.proposal_date else '' }}</div>
+<div class="proposal-date">Date: {{ proposal.proposal_date.strftime('%d %B %Y') if proposal.proposal_date else '&mdash;' }}</div>
+
+{% if diagram_b64 %}
+<div style="text-align:center; margin:8px 0 10px 0;">
+  <img src="data:image/jpeg;base64,{{ diagram_b64 }}" style="width:100mm;" alt="System Diagram">
+</div>
+{% endif %}
 
 <div class="section-heading">Project Summary</div>
 <table>
-  <tr><td>Customer Name</td><td><strong>{{ proposal.customer_name }}</strong></td></tr>
+  <tr><td style="width:38%;">Customer Name</td><td><strong>{{ proposal.customer_name }}</strong></td></tr>
   <tr><td>Customer Address</td><td>{{ proposal.customer_address }}</td></tr>
   <tr><td>Contact</td><td>{{ proposal.customer_contact or '&mdash;' }}</td></tr>
   <tr><td>System Type</td><td>{{ proposal.system_type }}</td></tr>
@@ -58,31 +86,31 @@
   <li>Operation &amp; Maintenance.</li>
 </ol>
 
-<div class="section-heading" style="margin-top:10px;">Bill of Material</div>
+<div class="section-heading">Bill of Material</div>
 <table>
   <tr>
     <th style="width:45%;">Item</th>
-    <th style="width:25%;">Quantity</th>
-    <th style="width:30%;">Make</th>
+    <th style="width:22%;">Quantity</th>
+    <th style="width:33%;">Make</th>
   </tr>
   {% for m in modules %}{% if m.module_type == 'DCR' %}
   <tr>
-    <td>Modules (Topcon, Bifacial) DCR<br><small style="color:#555;">{{ m.wattage }}</small></td>
+    <td>Modules (Topcon, Bifacial) DCR &ndash; {{ m.wattage }}</td>
     <td class="td-center">{{ m.quantity }} nos.</td>
-    <td>{{ company.get('module_makes','Rayzon Solar/Premier Energy/RenewSys/Pahal/Adani/TATA Power') }}</td>
+    <td>{{ company.get('module_makes','Rayzon / Premier / RenewSys / Adani / TATA') }}</td>
   </tr>
   {% endif %}{% endfor %}
   {% for m in modules %}{% if m.module_type == 'NDCR' %}
   <tr>
-    <td>Modules (Topcon, Bifacial) NDCR<br><small style="color:#555;">{{ m.wattage }}</small></td>
+    <td>Modules (Topcon, Bifacial) NDCR &ndash; {{ m.wattage }}</td>
     <td class="td-center">{{ m.quantity }} nos.</td>
-    <td>{{ company.get('module_makes','Rayzon Solar/Premier Energy/RenewSys/Pahal/Adani/TATA Power') }}</td>
+    <td>{{ company.get('module_makes','Rayzon / Premier / RenewSys / Adani / TATA') }}</td>
   </tr>
   {% endif %}{% endfor %}
   <tr>
     <td>Inverter</td>
     <td class="td-center">{{ proposal.inverter_capacity }} kW</td>
-    <td>{{ company.get('inverter_makes','Growatt/Deye') }}</td>
+    <td>{{ company.get('inverter_makes','Growatt / Deye') }}</td>
   </tr>
   <tr>
     <td>Mounting Structure</td>
@@ -102,13 +130,13 @@
   <tr><td>Earthing</td><td class="td-center">{{ company.get('earthing_quantity','3 nos.') }}</td><td>Indian Standard Make</td></tr>
   <tr><td>Lightning Arrestor</td><td class="td-center">{{ company.get('lightning_arrestor_quantity','1 no.') }}</td><td>Indian Standard Make</td></tr>
 </table>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;Make and quantity indicated is tentative and may change as per site condition and product availability.</div>
+<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;Make and quantity are tentative and may change as per site condition and product availability.</div>
 
-<div class="section-heading" style="margin-top:12px;">Commercial Offer</div>
+<div class="section-heading">Commercial Offer</div>
 <table>
   <tr>
     <th class="commercial-heading" style="width:70%;">Work Description</th>
-    <th class="commercial-heading" style="width:30%;text-align:right;">Price (Incl. GST)</th>
+    <th class="commercial-heading" style="width:30%; text-align:right;">Price (Incl. GST)</th>
   </tr>
   <tr>
     <td>Supply &amp; Installation of HYBRID Solar Plant {{ proposal.plant_capacity }} kW</td>
@@ -118,27 +146,22 @@
   <tr><td>{{ a.name }}</td><td class="td-right">Rs. {{ "{:,.2f}".format(a.amount) }}</td></tr>
   {% endfor %}
   {% if proposal.discount_percent > 0 %}
-  <tr><td>Discount ({{ proposal.discount_percent }}%)</td><td class="td-right" style="color:#c62828;">-Rs. {{ "{:,.2f}".format(proposal.discount_amount) }}</td></tr>
+  <tr>
+    <td>Discount ({{ proposal.discount_percent }}%)</td>
+    <td class="td-right" style="color:#c62828;">- Rs. {{ "{:,.2f}".format(proposal.discount_amount) }}</td>
+  </tr>
   {% endif %}
-  <tr class="grand-total-row"><td>GRAND TOTAL</td><td class="td-right">Rs. {{ "{:,.2f}".format(proposal.grand_total) }}</td></tr>
-  <tr class="cfa-row"><td><strong>CFA (DBT after Project Commissioning)</strong></td><td class="td-right"><strong>Rs. {{ "{:,.0f}".format(proposal.cfa_amount) }}</strong></td></tr>
+  <tr class="grand-total-row">
+    <td>GRAND TOTAL</td>
+    <td class="td-right">Rs. {{ "{:,.2f}".format(proposal.grand_total) }}</td>
+  </tr>
+  <tr class="cfa-row">
+    <td><strong>CFA (DBT after Project Commissioning)</strong></td>
+    <td class="td-right"><strong>Rs. {{ "{:,.0f}".format(proposal.cfa_amount) }}</strong></td>
+  </tr>
 </table>
 
-<p style="font-weight:bold;margin-top:8px;font-size:9pt;">Note:</p>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('note_approach','Easy approach to the work site to be provided by the consumer.') }}</div>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('note_shadow','Shadow free space on the roof should be provided for installation of solar panels.') }}</div>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('note_sim','Sim Data Service for remote monitoring is free for the first year. Thereafter a charge of Rs. 1500 per year.') }}</div>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('note_raised_structure','The cost of the Raised Structure will be Rs. 5000 per kW.') }}</div>
-
-<div class="section-heading" style="margin-top:12px;">Payment Terms</div>
-<table>
-  <tr><th style="width:60%;">Milestone</th><th>Amount Payable</th></tr>
-  {% for p in payments %}
-  <tr><td>{{ p.milestone }}</td><td>Rs. {{ "{:,.2f}".format(p.amount) }}</td></tr>
-  {% endfor %}
-</table>
-
-<div class="section-heading" style="margin-top:12px;">Warranty</div>
+<div class="section-heading">Warranty</div>
 <ul class="warranty-list">
   <li>{{ company.get('warranty_module_defect','12 Years warranty on solar modules against manufacturing defects') }}</li>
   <li>{{ company.get('warranty_module_performance','30 Years linear performance guarantee on solar modules') }}</li>
@@ -148,32 +171,76 @@
   {% endif %}
 </ul>
 
-<div class="section-heading" style="margin-top:12px;">Payment Details</div>
-<table class="bank-table">
-  <tr><td>Bank Account Number</td><td>{{ company.get('bank_account_number','125009426214') }}</td></tr>
-  <tr><td>Bank Account Name</td><td>{{ company.get('bank_account_name','Sologix Energy Private Limited') }}</td></tr>
-  <tr><td>Bank &amp; Branch</td><td>{{ company.get('bank_name','Canara Bank, Chutia, Ranchi, Jharkhand - 834001') }}</td></tr>
-  <tr><td>RTGS/NEFT IFSC No.</td><td>{{ company.get('bank_ifsc','CNRB0001969') }}</td></tr>
-  <tr><td>PAN Number</td><td>{{ company.get('company_pan','AAZCS9296C') }}</td></tr>
-</table>
-
-<table style="margin-top:16px;border:1px solid #ccc;width:100%;">
+<!-- Payment + Bank + QR in one block, avoid page break -->
+<table style="width:100%; border-collapse:collapse; page-break-inside:avoid; margin-bottom:8px;">
   <tr>
-    {% if qr_code_b64 %}
-    <td style="width:140px;text-align:center;vertical-align:middle;padding:10px;">
-      <img src="data:image/png;base64,{{ qr_code_b64 }}" style="width:120px;height:120px;" alt="UPI QR Code">
-    </td>
-    {% endif %}
-    <td style="vertical-align:middle;padding:10px 14px;">
-      <p style="font-weight:bold;font-size:11pt;margin-bottom:4px;">UPI / Google Pay</p>
-      <p style="font-size:10pt;font-weight:bold;">{{ company.get('company_name','SOLOGIX ENERGY PRIVATE LIMITED') }}</p>
-      <p style="font-size:9pt;color:#555;margin-top:4px;">UPI ID: {{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
-      <p style="font-size:9pt;color:#555;margin-top:2px;">Scan &amp; Pay via GPay / Paytm / PhonePe / BHIM UPI</p>
+    <td style="border:none; padding:0;">
+
+      <div class="section-heading" style="margin-top:10px;">Payment Schedule</div>
+      <table>
+        <tr>
+          <th class="commercial-heading" style="width:8%; text-align:center;">#</th>
+          <th class="commercial-heading" style="width:55%;">Payment Milestone</th>
+          <th class="commercial-heading" style="width:37%; text-align:right;">Amount Payable</th>
+        </tr>
+        {% for p in payments %}
+        <tr>
+          <td class="td-center" style="color:#555;">{{ loop.index }}</td>
+          <td>{{ p.milestone }}</td>
+          <td class="td-right" style="font-weight:bold;">Rs. {{ "{:,.2f}".format(p.amount) }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="background:#e8f5e9;">
+          <td colspan="2" style="font-weight:bold; padding:6px 8px;">Total</td>
+          <td class="td-right" style="font-weight:bold; color:#1b5e20;">Rs. {{ "{:,.2f}".format(payments | sum(attribute='amount')) }}</td>
+        </tr>
+      </table>
+
+      <table style="margin-top:8px; border:1px solid #bbb; width:100%; border-collapse:collapse;">
+        <tr>
+          <td style="vertical-align:top; padding:10px; width:62%; border-right:1px solid #bbb;">
+            <p style="font-weight:bold; font-size:13pt; margin-bottom:6px; color:#1a237e;">Bank Transfer Details</p>
+            <table style="border-collapse:collapse; width:100%; margin:0;">
+              <tr>
+                <td style="border:none; padding:3px 0; font-weight:bold; width:46%; font-size:11pt;">Account Number</td>
+                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_account_number','125009426214') }}</td>
+              </tr>
+              <tr>
+                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">Account Name</td>
+                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_account_name','Sologix Energy Private Limited') }}</td>
+              </tr>
+              <tr>
+                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">Bank &amp; Branch</td>
+                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_name','Canara Bank, Chutia, Ranchi - 834001') }}</td>
+              </tr>
+              <tr>
+                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">RTGS/NEFT IFSC</td>
+                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_ifsc','CNRB0001969') }}</td>
+              </tr>
+              <tr>
+                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">PAN Number</td>
+                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('company_pan','AAZCS9296C') }}</td>
+              </tr>
+            </table>
+          </td>
+          <td style="vertical-align:middle; padding:10px; width:38%; text-align:center;">
+            <p style="font-weight:bold; font-size:13pt; margin-bottom:6px; color:#1a237e;">UPI / Google Pay</p>
+            {% if qr_code_b64 %}
+            <img src="data:image/png;base64,{{ qr_code_b64 }}" style="width:110px; height:110px;" alt="UPI QR Code">
+            {% endif %}
+            <p style="font-size:10pt; font-weight:bold; margin-top:5px;">{{ company.get('company_name','SOLOGIX ENERGY PRIVATE LIMITED') }}</p>
+            <p style="font-size:9.5pt; color:#555; margin-top:3px;">{{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
+            <p style="font-size:9pt; color:#777; margin-top:2px;">GPay &bull; Paytm &bull; PhonePe &bull; BHIM</p>
+          </td>
+        </tr>
+      </table>
+      <div class="bullet-note" style="margin-top:5px;">
+        <span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('payment_reminder','Do not forget to collect receipt of payment.') }}
+      </div>
+
     </td>
   </tr>
 </table>
-
-<div class="bullet-note" style="margin-top:10px;"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('payment_reminder','Do not forget to collect receipt of payment.') }}</div>
 
 <div class="section-heading" style="margin-top:12px;">Acceptance of Proposal</div>
 <table class="acceptance-table">
@@ -181,7 +248,10 @@
     <th style="width:50%;">For: {{ proposal.customer_name }}</th>
     <th style="width:50%;">For: {{ company.get('company_name','Sologix Energy Private Limited') }}</th>
   </tr>
-  <tr><td style="height:70px;">Signature:<br><br></td><td style="height:70px;">Signature:<br><br></td></tr>
+  <tr>
+    <td style="height:75px;">Signature:<br><br></td>
+    <td style="height:75px;">Signature:<br><br></td>
+  </tr>
   <tr><td>Name: ____________________</td><td>Name: ____________________</td></tr>
   <tr><td>Date: ____________________</td><td>Date: ____________________</td></tr>
   <tr>

@@ -64,6 +64,16 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
     except Exception as e:
         logger.warning(f'QR code generation failed: {e}')
 
+    diagram_b64 = None
+    try:
+        import base64
+        diagram_file = 'hybrid.jpeg' if proposal.system_type == 'HYBRID' else 'ongrid.jpeg'
+        diagram_path = os.path.join(current_app.root_path, 'static', 'images', diagram_file)
+        with open(diagram_path, 'rb') as f:
+            diagram_b64 = base64.b64encode(f.read()).decode('utf-8')
+    except Exception as e:
+        logger.warning(f'Diagram image load failed: {e}')
+
     try:
         html_content = render_template(
             html_template,
@@ -75,6 +85,7 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
             payments=list(proposal.payments.order_by('sequence')),
             battery=proposal.battery,
             qr_code_b64=qr_code_b64,
+            diagram_b64=diagram_b64,
         )
     except Exception as e:
         logger.error(f'Template render error: {e}')
@@ -87,7 +98,11 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
     output_dir.mkdir(parents=True, exist_ok=True)
 
     version_num = proposal.versions.count() + 1
-    file_name = f'{proposal.proposal_number}-v{version_num}.pdf'
+    # Naming: "Mr Even Tigga 5 kW Ongrid Proposal.pdf" style
+    system_label = 'Hybrid' if proposal.system_type == 'HYBRID' else 'Ongrid'
+    capacity = proposal.plant_capacity
+    safe_name = proposal.customer_name.replace('/', '-').replace('\\', '-')
+    file_name = f'{safe_name} {capacity} kW {system_label} Proposal.pdf'
     file_path = output_dir / file_name
 
     try:
