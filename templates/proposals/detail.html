@@ -198,9 +198,9 @@
     <div class="card-body">
         <p class="text-muted small mb-3">
             {% if proposal.status == 'DRAFT' %}
-            Payments must sum to Grand Total before generating.
+            Add at least one payment stage, then generate the PDF.
             {% else %}
-            Re-generate an updated version of the proposal.
+            Re-generate an updated version of the proposal PDF.
             {% endif %}
         </p>
         <form method="post" action="{{ url_for('proposals.generate', proposal_id=proposal.id) }}">

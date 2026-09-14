@@ -54,6 +54,11 @@
                             {% if p.status == 'DRAFT' %}
                             <a href="{{ url_for('proposals.edit', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                             {% endif %}
+                            {% if p.status in ('GENERATED','ACCEPTED') %}
+                            <a href="{{ url_for('proposals.download', proposal_id=p.id) }}" class="btn btn-sm btn-outline-dark" title="Download PDF">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

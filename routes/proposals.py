@@ -101,18 +101,7 @@ def generate(proposal_id):
         flash('Cannot regenerate PDF for this proposal status.', 'warning')
         return redirect(url_for('proposals.detail', proposal_id=proposal_id))
 
-    # Validate payment total matches grand total
-    addons = [{'amount': float(a.amount)} for a in proposal.addons]
     payments_list = [{'amount': float(p.amount)} for p in proposal.payments]
-    _, calc_errors = calculate_all(
-        float(proposal.plant_capacity), float(proposal.base_price),
-        addons, float(proposal.discount_percent), payments_list
-    )
-    if calc_errors:
-        for e in calc_errors:
-            flash(e, 'danger')
-        return redirect(url_for('proposals.detail', proposal_id=proposal_id))
-
     if not payments_list:
         flash('Add at least one payment stage before generating PDF.', 'danger')
         return redirect(url_for('proposals.detail', proposal_id=proposal_id))

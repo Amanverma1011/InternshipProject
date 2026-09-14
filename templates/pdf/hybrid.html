@@ -142,7 +142,10 @@
 <ul class="warranty-list">
   <li>{{ company.get('warranty_module_defect','12 Years warranty on solar modules against manufacturing defects') }}</li>
   <li>{{ company.get('warranty_module_performance','30 Years linear performance guarantee on solar modules') }}</li>
-  <li>{{ company.get('warranty_inverter','8 years warranty on solar Hybrid Inverters.') }}</li>
+  <li>{{ company.get('warranty_inverter','5 Years warranty on Hybrid Inverters') }}</li>
+  {% if battery %}
+  <li>{{ company.get('warranty_battery','5 Years warranty on Batteries') }}</li>
+  {% endif %}
 </ul>
 
 <div class="section-heading" style="margin-top:12px;">Payment Details</div>
@@ -154,12 +157,21 @@
   <tr><td>PAN Number</td><td>{{ company.get('company_pan','AAZCS9296C') }}</td></tr>
 </table>
 
-<div style="margin-top:16px;text-align:center;border:1px solid #ccc;padding:14px;">
-  <p style="font-weight:bold;font-size:11pt;margin-bottom:4px;">UPI Payment</p>
-  <p style="font-size:10pt;font-weight:bold;">SOLOGIX ENERGY</p>
-  <p style="font-size:9pt;color:#555;">UPI ID: {{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
-  <p style="font-size:9pt;color:#555;">Scan &amp; Pay via GPay / Paytm / PhonePe / BHIM UPI</p>
-</div>
+<table style="margin-top:16px;border:1px solid #ccc;width:100%;">
+  <tr>
+    {% if qr_code_b64 %}
+    <td style="width:140px;text-align:center;vertical-align:middle;padding:10px;">
+      <img src="data:image/png;base64,{{ qr_code_b64 }}" style="width:120px;height:120px;" alt="UPI QR Code">
+    </td>
+    {% endif %}
+    <td style="vertical-align:middle;padding:10px 14px;">
+      <p style="font-weight:bold;font-size:11pt;margin-bottom:4px;">UPI / Google Pay</p>
+      <p style="font-size:10pt;font-weight:bold;">{{ company.get('company_name','SOLOGIX ENERGY PRIVATE LIMITED') }}</p>
+      <p style="font-size:9pt;color:#555;margin-top:4px;">UPI ID: {{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
+      <p style="font-size:9pt;color:#555;margin-top:2px;">Scan &amp; Pay via GPay / Paytm / PhonePe / BHIM UPI</p>
+    </td>
+  </tr>
+</table>
 
 <div class="bullet-note" style="margin-top:10px;"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('payment_reminder','Do not forget to collect receipt of payment.') }}</div>
 

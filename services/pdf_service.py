@@ -45,6 +45,25 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
     html_template = f'pdf/{proposal.system_type.lower()}.html'
 
     letterhead_path = os.path.join(current_app.root_path, 'static', 'images', 'letterhead.png')
+
+    qr_code_b64 = None
+    try:
+        import qrcode
+        import base64
+        import io as _io
+        upi_id = company.get('bank_upi_id', '8287766474@okbizaxis')
+        co_name = company.get('company_name', 'SOLOGIX ENERGY').replace(' ', '%20')
+        upi_string = f"upi://pay?pa={upi_id}&pn={co_name}"
+        qr = qrcode.QRCode(version=1, box_size=6, border=2)
+        qr.add_data(upi_string)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
+        buf = _io.BytesIO()
+        qr_img.save(buf, format='PNG')
+        qr_code_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+    except Exception as e:
+        logger.warning(f'QR code generation failed: {e}')
+
     try:
         html_content = render_template(
             html_template,
@@ -55,6 +74,7 @@ def generate_pdf_for_proposal(proposal: Proposal, user: User) -> Tuple[bool, str
             addons=list(proposal.addons.order_by('sequence')),
             payments=list(proposal.payments.order_by('sequence')),
             battery=proposal.battery,
+            qr_code_b64=qr_code_b64,
         )
     except Exception as e:
         logger.error(f'Template render error: {e}')
