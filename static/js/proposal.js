@@ -41,9 +41,10 @@ const ProposalCalc = (function () {
     const addons = getAddons();
     const payments = getPayments();
 
+    const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || '';
     fetch('/api/calculate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
       body: JSON.stringify({ plant_capacity: cap, base_price: base, addons, discount_percent: disc, payments })
     })
       .then(r => r.json())
