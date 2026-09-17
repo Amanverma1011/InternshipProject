@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from models.user import User
+from models.proposal import Proposal
 from models import db
 from services.audit_service import log_action
 
@@ -65,6 +66,25 @@ def toggle_user(user_id):
     action = 'ENABLE_USER' if user.is_active else 'DISABLE_USER'
     log_action(action, 'user', user.id, {'username': user.username})
     flash(f'User "{user.username}" {"enabled" if user.is_active else "disabled"}.', 'success')
+    return redirect(url_for('users.list_users'))
+
+
+@users_bp.route('/users/<int:user_id>/delete', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    _require_master()
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash('Cannot delete your own account.', 'danger')
+        return redirect(url_for('users.list_users'))
+    proposal_count = Proposal.query.filter_by(created_by=user.id).count()
+    if proposal_count > 0:
+        flash(f'Cannot delete "{user.username}" — they have {proposal_count} proposal(s). Disable the account instead.', 'danger')
+        return redirect(url_for('users.list_users'))
+    log_action('DELETE_USER', 'user', user.id, {'username': user.username})
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'User "{user.username}" deleted.', 'success')
     return redirect(url_for('users.list_users'))
 
 
