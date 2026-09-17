@@ -47,6 +47,28 @@ class TestingConfig(Config):
     SESSION_COOKIE_SECURE = False
 
 
+class TestingProdConfig(Config):
+    """Production-equivalent test config: real MySQL (sologix_test), CSRF enabled."""
+    TESTING = True
+    SESSION_COOKIE_SECURE = False
+    SQLALCHEMY_DATABASE_URI = (
+        f"mysql+pymysql://{os.environ.get('DB_USER', 'sologix_app')}:"
+        f"{os.environ.get('DB_PASSWORD', '')}@"
+        f"{os.environ.get('DB_HOST', '127.0.0.1')}:"
+        f"{os.environ.get('DB_PORT', '3306')}/"
+        f"sologix_test?charset=utf8mb4"
+    )
+    STORAGE_PATH = '/tmp/solar_pytest_storage'
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        **Config.SQLALCHEMY_ENGINE_OPTIONS,
+        # READ COMMITTED lets test helpers (with app.app_context()) see commits
+        # from other sessions immediately, avoiding MySQL REPEATABLE READ snapshot
+        # isolation that would otherwise make direct DB fixtures invisible to
+        # subsequent HTTP requests through the test client.
+        'isolation_level': 'READ COMMITTED',
+    }
+
+
 class ProductionConfig(Config):
     DEBUG = False
 

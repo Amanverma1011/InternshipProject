@@ -156,7 +156,7 @@ def reject(proposal_id):
 @login_required
 def api_calculate():
     data = request.get_json()
-    if not data:
+    if data is None:
         return jsonify({'error': 'No data'}), 400
     try:
         plant_capacity = float(data.get('plant_capacity', 0))

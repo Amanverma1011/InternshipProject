@@ -27,6 +27,8 @@ def login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         user = User.query.filter_by(username=username).first()
+        if user and user.username != username:
+            user = None
         if not user or not check_password_hash(user.password_hash, password):
             log_action('LOGIN_FAILED', 'user', None, {
                 'username': username,
