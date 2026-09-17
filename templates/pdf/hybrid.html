@@ -3,52 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <style>
-  @page { size: A4; margin: 38mm 14mm 28mm 14mm; }
+  @page { size: A4; margin: 28mm 14mm 20mm 14mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: #222; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #222; }
 
   .proposal-title {
-    font-size: 20pt; font-weight: bold; color: #1a237e;
+    font-size: 18pt; font-weight: bold; color: #1a237e;
     text-align: center; text-decoration: underline;
-    margin: 4px 0 2px 0;
+    margin: 2px 0 2px 0;
   }
   .proposal-date {
-    font-size: 12pt; color: #444;
-    text-align: center; margin-bottom: 10px;
+    font-size: 11pt; color: #444;
+    text-align: center; margin-bottom: 6px;
   }
   .section-heading {
-    font-weight: bold; font-size: 15pt; color: #1a237e;
-    margin: 10px 0 5px 0; border-bottom: 2px solid #2e7d32;
-    padding-bottom: 0; text-align: left;
+    font-weight: bold; font-size: 13pt; color: #1a237e;
+    margin: 18px 0 6px 0; text-align: left;
+    text-decoration: underline;
   }
+  .section-block { margin-bottom: 30px; }
+  .page-break { page-break-before: always; }
 
-  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
   th, td {
-    border: 1px solid #bbb; padding: 5px 8px;
-    font-size: 12pt; font-family: 'Times New Roman', Times, serif;
+    border: 1px solid #bbb; padding: 2px 6px;
+    font-size: 11pt; font-family: 'Times New Roman', Times, serif;
     word-wrap: break-word; text-align: left;
   }
   th { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
   .td-center { text-align: center; }
   .td-right  { text-align: right; }
 
-  .scope-list  { padding-left: 20px; font-size: 12pt; line-height: 1.4; margin-bottom: 6px; }
-  .scope-list li { margin-bottom: 3px; text-align: justify; }
+  .scope-list { padding-left: 18px; font-size: 11pt; line-height: 1.3; margin-bottom: 4px; }
+  .scope-list li { margin-bottom: 2px; text-align: justify; }
 
   .commercial-heading {
     background: #2e7d32; color: white;
-    padding: 5px 8px; font-weight: bold; text-align: left;
+    padding: 3px 6px; font-weight: bold; text-align: left;
   }
-  .grand-total-row td { font-weight: bold; font-size: 12pt; background: #f0f0f0; }
+  .grand-total-row td { font-weight: bold; font-size: 11pt; background: #f0f0f0; }
   .cfa-row td { color: #2e7d32; font-weight: bold; }
   .battery-row { background: #fff8e1; }
 
-  .warranty-list { padding-left: 20px; font-size: 12pt; line-height: 1.4; margin-bottom: 6px; }
-  .warranty-list li { margin-bottom: 3px; text-align: justify; }
+  .warranty-list { padding-left: 18px; font-size: 11pt; line-height: 1.3; margin-bottom: 4px; }
+  .warranty-list li { margin-bottom: 2px; text-align: justify; }
 
-  .acceptance-table td { vertical-align: top; padding: 8px; }
+  .acceptance-table td { vertical-align: top; padding: 6px; }
   .accept-label { font-size: 10pt; color: #555; }
-  .bullet-note { font-size: 12pt; margin: 4px 0; }
+  .bullet-note { font-size: 11pt; margin: 3px 0; }
 </style>
 </head>
 <body>
@@ -56,127 +58,144 @@
 <div class="proposal-title">HYBRID Solar Plant &ndash; {{ proposal.plant_capacity }} kWp</div>
 <div class="proposal-date">Date: {{ proposal.proposal_date.strftime('%d %B %Y') if proposal.proposal_date else '&mdash;' }}</div>
 
+<!-- Project Summary -->
+<div class="section-block">
+  <div class="section-heading">Project Summary</div>
+  <table>
+    <tr><td style="width:36%;">Customer Name</td><td><strong>{{ proposal.customer_name | title }}</strong></td></tr>
+    <tr><td>Customer Address</td><td>{{ proposal.customer_address }}</td></tr>
+    <tr><td>Contact</td><td>{{ proposal.customer_contact or '&mdash;' }}</td></tr>
+    <tr><td>System Type</td><td>{{ proposal.system_type }}</td></tr>
+    <tr><td>Plant Capacity</td><td>{{ proposal.plant_capacity }} kWp</td></tr>
+    <tr><td>Total Area Covered</td><td>{{ proposal.total_area }} Sq. Ft.</td></tr>
+    <tr><td>Type of Mounting</td><td>{{ proposal.mounting_type }}</td></tr>
+    <tr><td>Tilt Angle</td><td>{{ proposal.tilt_angle or company.get('tilt_angle','15-22 degrees') }}</td></tr>
+  </table>
+</div>
+
+<!-- Scope of Work -->
+<div class="section-block">
+  <div class="section-heading">Scope of Work</div>
+  <ol class="scope-list">
+    <li>System sizing/design and engineering. Procurement and supply of project-related material.</li>
+    <li>Civil activities: foundation, pedestal and cable conduit fittings.</li>
+    <li>Erection of module mounting structure.</li>
+    <li>Installation of solar Modules, Inverter, Battery, Earthing, Lightning Arresters, etc.</li>
+    <li>Complete wiring work related to solar system.</li>
+    <li>Facilitation of Net-metering including application processing, meter replacement, etc.</li>
+    <li>Commissioning of Plant.</li>
+    <li>Operation &amp; Maintenance.</li>
+  </ol>
+</div>
+
+<!-- Diagram (after Scope of Work) -->
 {% if diagram_b64 %}
-<div style="text-align:center; margin:8px 0 10px 0;">
+<div style="text-align:center; margin:6px 0 8px 0;">
   <img src="data:image/jpeg;base64,{{ diagram_b64 }}" style="width:100mm;" alt="System Diagram">
 </div>
 {% endif %}
 
-<div class="section-heading">Project Summary</div>
-<table>
-  <tr><td style="width:38%;">Customer Name</td><td><strong>{{ proposal.customer_name }}</strong></td></tr>
-  <tr><td>Customer Address</td><td>{{ proposal.customer_address }}</td></tr>
-  <tr><td>Contact</td><td>{{ proposal.customer_contact or '&mdash;' }}</td></tr>
-  <tr><td>System Type</td><td>{{ proposal.system_type }}</td></tr>
-  <tr><td>Plant Capacity</td><td>{{ proposal.plant_capacity }} kWp</td></tr>
-  <tr><td>Total Area Covered</td><td>{{ proposal.total_area }} Sq. Ft.</td></tr>
-  <tr><td>Type of Mounting</td><td>{{ proposal.mounting_type }}</td></tr>
-  <tr><td>Tilt Angle</td><td>{{ proposal.tilt_angle or company.get('tilt_angle','15-22 degrees') }}</td></tr>
-</table>
+<!-- Bill of Material -->
+<div class="section-block page-break">
+  <div class="section-heading">Bill of Material</div>
+  <table>
+    <tr>
+      <th style="width:45%;">Item</th>
+      <th style="width:22%;">Quantity</th>
+      <th style="width:33%;">Make</th>
+    </tr>
+    {% for m in modules %}{% if m.module_type == 'DCR' %}
+    <tr>
+      <td>Modules (Topcon, Bifacial) DCR &ndash; {{ m.wattage }}</td>
+      <td class="td-center">{{ m.quantity }} nos.</td>
+      <td>{{ (m.make or '').split('/')[0].strip() or 'Rayzon Solar' }}</td>
+    </tr>
+    {% endif %}{% endfor %}
+    {% for m in modules %}{% if m.module_type == 'NDCR' %}
+    <tr>
+      <td>Modules (Topcon, Bifacial) NDCR &ndash; {{ m.wattage }}</td>
+      <td class="td-center">{{ m.quantity }} nos.</td>
+      <td>{{ (m.make or '').split('/')[0].strip() or 'Rayzon Solar' }}</td>
+    </tr>
+    {% endif %}{% endfor %}
+    <tr>
+      <td>Inverter</td>
+      <td class="td-center">{{ proposal.inverter_capacity }} kW</td>
+      <td>{{ company.get('inverter_makes','Growatt / Deye') }}</td>
+    </tr>
+    <tr>
+      <td>Mounting Structure</td>
+      <td class="td-center">{{ proposal.plant_capacity }} kW</td>
+      <td>{{ company.get('mounting_structure_make','HDGI') }}</td>
+    </tr>
+    {% if battery %}
+    <tr class="battery-row">
+      <td>Battery {{ battery.capacity_kwh }} kWhr</td>
+      <td class="td-center">{{ battery.quantity }} nos.</td>
+      <td>{{ battery.chemistry or company.get('battery_chemistry','FeLiO4P') }}</td>
+    </tr>
+    {% endif %}
+    <tr><td>DC Cable / AC Cable</td><td class="td-center">As per requirement</td><td>As per MNRE specification</td></tr>
+    <tr><td>ACDB with Surge Protection Device</td><td class="td-center">1</td><td>Sologix</td></tr>
+    <tr><td>DCDB with Surge Protection Device</td><td class="td-center">1</td><td>Sologix</td></tr>
+    <tr><td>Earthing</td><td class="td-center">{{ company.get('earthing_quantity','3 nos.') }}</td><td>Indian Standard Make</td></tr>
+    <tr><td>Lightning Arrestor</td><td class="td-center">{{ company.get('lightning_arrestor_quantity','1 no.') }}</td><td>Indian Standard Make</td></tr>
+  </table>
+  <div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;Make and quantity are tentative and may change as per site condition and product availability.</div>
+</div>
 
-<div class="section-heading">Scope of Work</div>
-<ol class="scope-list">
-  <li>System sizing/design and engineering. Procurement and supply of project-related material.</li>
-  <li>Civil activities: foundation, pedestal and cable conduit fittings.</li>
-  <li>Erection of module mounting structure.</li>
-  <li>Installation of solar Modules, Inverter, Battery, Earthing, Lightning Arresters, etc.</li>
-  <li>Complete wiring work related to solar system.</li>
-  <li>Facilitation of Net-metering including application processing, meter replacement, etc.</li>
-  <li>Commissioning of Plant.</li>
-  <li>Operation &amp; Maintenance.</li>
-</ol>
+<!-- Commercial Offer + Warranty (same page) -->
+{% set dcr_modules = modules | selectattr('module_type', 'equalto', 'DCR') | list %}
+{% set has_dcr = dcr_modules | length > 0 %}
+<div class="section-block page-break">
+  <div class="section-heading">Commercial Offer</div>
+  <table>
+    <tr>
+      <th class="commercial-heading" style="width:70%;">Work Description</th>
+      <th class="commercial-heading" style="width:30%; text-align:right;">Price (Incl. GST)</th>
+    </tr>
+    <tr>
+      <td>Supply &amp; Installation of HYBRID Solar Plant {{ proposal.plant_capacity }} kW</td>
+      <td class="td-right">Rs. {{ "{:,.2f}".format(proposal.base_price) }}</td>
+    </tr>
+    {% for a in addons %}
+    <tr><td>{{ a.name }}</td><td class="td-right">Rs. {{ "{:,.2f}".format(a.amount) }}</td></tr>
+    {% endfor %}
+    {% if proposal.discount_percent > 0 %}
+    <tr>
+      <td>Discount ({{ proposal.discount_percent }}%)</td>
+      <td class="td-right" style="color:#c62828;">- Rs. {{ "{:,.2f}".format(proposal.discount_amount) }}</td>
+    </tr>
+    {% endif %}
+    <tr class="grand-total-row">
+      <td>GRAND TOTAL</td>
+      <td class="td-right">Rs. {{ "{:,.2f}".format(proposal.grand_total) }}</td>
+    </tr>
+    {% if has_dcr %}
+    <tr class="cfa-row">
+      <td><strong>CFA (DBT after Project Commissioning)</strong></td>
+      <td class="td-right"><strong>Rs. {{ "{:,.0f}".format(proposal.cfa_amount) }}</strong></td>
+    </tr>
+    {% endif %}
+  </table>
 
-<div class="section-heading">Bill of Material</div>
-<table>
-  <tr>
-    <th style="width:45%;">Item</th>
-    <th style="width:22%;">Quantity</th>
-    <th style="width:33%;">Make</th>
-  </tr>
-  {% for m in modules %}{% if m.module_type == 'DCR' %}
-  <tr>
-    <td>Modules (Topcon, Bifacial) DCR &ndash; {{ m.wattage }}</td>
-    <td class="td-center">{{ m.quantity }} nos.</td>
-    <td>{{ company.get('module_makes','Rayzon / Premier / RenewSys / Adani / TATA') }}</td>
-  </tr>
-  {% endif %}{% endfor %}
-  {% for m in modules %}{% if m.module_type == 'NDCR' %}
-  <tr>
-    <td>Modules (Topcon, Bifacial) NDCR &ndash; {{ m.wattage }}</td>
-    <td class="td-center">{{ m.quantity }} nos.</td>
-    <td>{{ company.get('module_makes','Rayzon / Premier / RenewSys / Adani / TATA') }}</td>
-  </tr>
-  {% endif %}{% endfor %}
-  <tr>
-    <td>Inverter</td>
-    <td class="td-center">{{ proposal.inverter_capacity }} kW</td>
-    <td>{{ company.get('inverter_makes','Growatt / Deye') }}</td>
-  </tr>
-  <tr>
-    <td>Mounting Structure</td>
-    <td class="td-center">{{ proposal.plant_capacity }} kW</td>
-    <td>{{ company.get('mounting_structure_make','HDGI') }}</td>
-  </tr>
-  {% if battery %}
-  <tr class="battery-row">
-    <td>Battery {{ battery.capacity_kwh }} kWhr</td>
-    <td class="td-center">{{ battery.quantity }} nos.</td>
-    <td>{{ battery.chemistry or company.get('battery_chemistry','FeLiO4P') }}</td>
-  </tr>
-  {% endif %}
-  <tr><td>DC Cable / AC Cable</td><td class="td-center">As per requirement</td><td>As per MNRE specification</td></tr>
-  <tr><td>ACDB with Surge Protection Device</td><td class="td-center">1</td><td>Sologix</td></tr>
-  <tr><td>DCDB with Surge Protection Device</td><td class="td-center">1</td><td>Sologix</td></tr>
-  <tr><td>Earthing</td><td class="td-center">{{ company.get('earthing_quantity','3 nos.') }}</td><td>Indian Standard Make</td></tr>
-  <tr><td>Lightning Arrestor</td><td class="td-center">{{ company.get('lightning_arrestor_quantity','1 no.') }}</td><td>Indian Standard Make</td></tr>
-</table>
-<div class="bullet-note"><span style="color:#2e7d32;">&#x25cf;</span>&nbsp;Make and quantity are tentative and may change as per site condition and product availability.</div>
+  <div class="section-heading" style="margin-top:30px;">Warranty</div>
+  <ul class="warranty-list">
+    <li>{{ company.get('warranty_module_defect','12 Years warranty on solar modules against manufacturing defects') }}</li>
+    <li>{{ company.get('warranty_module_performance','30 Years linear performance guarantee on solar modules') }}</li>
+    <li>{{ company.get('warranty_hybrid_inverter','5 Years warranty on Hybrid Inverters') }}</li>
+    {% if battery %}
+    <li>{{ company.get('warranty_battery','5 Years warranty on Batteries') }}</li>
+    {% endif %}
+  </ul>
+</div>
 
-<div class="section-heading">Commercial Offer</div>
-<table>
-  <tr>
-    <th class="commercial-heading" style="width:70%;">Work Description</th>
-    <th class="commercial-heading" style="width:30%; text-align:right;">Price (Incl. GST)</th>
-  </tr>
-  <tr>
-    <td>Supply &amp; Installation of HYBRID Solar Plant {{ proposal.plant_capacity }} kW</td>
-    <td class="td-right">Rs. {{ "{:,.2f}".format(proposal.base_price) }}</td>
-  </tr>
-  {% for a in addons %}
-  <tr><td>{{ a.name }}</td><td class="td-right">Rs. {{ "{:,.2f}".format(a.amount) }}</td></tr>
-  {% endfor %}
-  {% if proposal.discount_percent > 0 %}
-  <tr>
-    <td>Discount ({{ proposal.discount_percent }}%)</td>
-    <td class="td-right" style="color:#c62828;">- Rs. {{ "{:,.2f}".format(proposal.discount_amount) }}</td>
-  </tr>
-  {% endif %}
-  <tr class="grand-total-row">
-    <td>GRAND TOTAL</td>
-    <td class="td-right">Rs. {{ "{:,.2f}".format(proposal.grand_total) }}</td>
-  </tr>
-  <tr class="cfa-row">
-    <td><strong>CFA (DBT after Project Commissioning)</strong></td>
-    <td class="td-right"><strong>Rs. {{ "{:,.0f}".format(proposal.cfa_amount) }}</strong></td>
-  </tr>
-</table>
-
-<div class="section-heading">Warranty</div>
-<ul class="warranty-list">
-  <li>{{ company.get('warranty_module_defect','12 Years warranty on solar modules against manufacturing defects') }}</li>
-  <li>{{ company.get('warranty_module_performance','30 Years linear performance guarantee on solar modules') }}</li>
-  <li>{{ company.get('warranty_inverter','5 Years warranty on Hybrid Inverters') }}</li>
-  {% if battery %}
-  <li>{{ company.get('warranty_battery','5 Years warranty on Batteries') }}</li>
-  {% endif %}
-</ul>
-
-<!-- Payment + Bank + QR in one block, avoid page break -->
-<table style="width:100%; border-collapse:collapse; page-break-inside:avoid; margin-bottom:8px;">
+<!-- Payment + Bank + QR -->
+<table class="page-break" style="width:100%; border-collapse:collapse; page-break-inside:avoid; margin-bottom:6px;">
   <tr>
     <td style="border:none; padding:0;">
 
-      <div class="section-heading" style="margin-top:10px;">Payment Schedule</div>
+      <div class="section-heading" style="margin-bottom:4px;">Payment Schedule</div>
       <table>
         <tr>
           <th class="commercial-heading" style="width:8%; text-align:center;">#</th>
@@ -191,50 +210,50 @@
         </tr>
         {% endfor %}
         <tr style="background:#e8f5e9;">
-          <td colspan="2" style="font-weight:bold; padding:6px 8px;">Total</td>
+          <td colspan="2" style="font-weight:bold; padding:4px 6px;">Total</td>
           <td class="td-right" style="font-weight:bold; color:#1b5e20;">Rs. {{ "{:,.2f}".format(payments | sum(attribute='amount')) }}</td>
         </tr>
       </table>
 
-      <table style="margin-top:8px; border:1px solid #bbb; width:100%; border-collapse:collapse;">
+      <table style="margin-top:6px; border:1px solid #bbb; width:100%; border-collapse:collapse;">
         <tr>
-          <td style="vertical-align:top; padding:10px; width:62%; border-right:1px solid #bbb;">
-            <p style="font-weight:bold; font-size:13pt; margin-bottom:6px; color:#1a237e;">Bank Transfer Details</p>
+          <td style="vertical-align:top; padding:8px; width:62%; border-right:1px solid #bbb;">
+            <p style="font-weight:bold; font-size:12pt; margin-bottom:4px; color:#1a237e;">Bank Transfer Details</p>
             <table style="border-collapse:collapse; width:100%; margin:0;">
               <tr>
-                <td style="border:none; padding:3px 0; font-weight:bold; width:46%; font-size:11pt;">Account Number</td>
-                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_account_number','125009426214') }}</td>
+                <td style="border:none; padding:2px 0; font-weight:bold; width:46%; font-size:10pt;">Account Number</td>
+                <td style="border:none; padding:2px 0; font-size:10pt;">{{ company.get('bank_account_number','125009426214') }}</td>
               </tr>
               <tr>
-                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">Account Name</td>
-                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_account_name','Sologix Energy Private Limited') }}</td>
+                <td style="border:none; padding:2px 0; font-weight:bold; font-size:10pt;">Account Name</td>
+                <td style="border:none; padding:2px 0; font-size:10pt;">{{ company.get('bank_account_name','Sologix Energy Private Limited') }}</td>
               </tr>
               <tr>
-                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">Bank &amp; Branch</td>
-                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_name','Canara Bank, Chutia, Ranchi - 834001') }}</td>
+                <td style="border:none; padding:2px 0; font-weight:bold; font-size:10pt;">Bank &amp; Branch</td>
+                <td style="border:none; padding:2px 0; font-size:10pt;">{{ company.get('bank_name','Canara Bank, Chutia, Ranchi - 834001') }}</td>
               </tr>
               <tr>
-                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">RTGS/NEFT IFSC</td>
-                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('bank_ifsc','CNRB0001969') }}</td>
+                <td style="border:none; padding:2px 0; font-weight:bold; font-size:10pt;">RTGS/NEFT IFSC</td>
+                <td style="border:none; padding:2px 0; font-size:10pt;">{{ company.get('bank_ifsc','CNRB0001969') }}</td>
               </tr>
               <tr>
-                <td style="border:none; padding:3px 0; font-weight:bold; font-size:11pt;">PAN Number</td>
-                <td style="border:none; padding:3px 0; font-size:11pt;">{{ company.get('company_pan','AAZCS9296C') }}</td>
+                <td style="border:none; padding:2px 0; font-weight:bold; font-size:10pt;">PAN Number</td>
+                <td style="border:none; padding:2px 0; font-size:10pt;">{{ company.get('company_pan','AAZCS9296C') }}</td>
               </tr>
             </table>
           </td>
-          <td style="vertical-align:middle; padding:10px; width:38%; text-align:center;">
-            <p style="font-weight:bold; font-size:13pt; margin-bottom:6px; color:#1a237e;">UPI / Google Pay</p>
+          <td style="vertical-align:middle; padding:8px; width:38%; text-align:center;">
+            <p style="font-weight:bold; font-size:12pt; margin-bottom:4px; color:#1a237e;">UPI / Google Pay</p>
             {% if qr_code_b64 %}
-            <img src="data:image/png;base64,{{ qr_code_b64 }}" style="width:110px; height:110px;" alt="UPI QR Code">
+            <img src="data:image/png;base64,{{ qr_code_b64 }}" style="width:100px; height:100px;" alt="UPI QR Code">
             {% endif %}
-            <p style="font-size:10pt; font-weight:bold; margin-top:5px;">{{ company.get('company_name','SOLOGIX ENERGY PRIVATE LIMITED') }}</p>
-            <p style="font-size:9.5pt; color:#555; margin-top:3px;">{{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
-            <p style="font-size:9pt; color:#777; margin-top:2px;">GPay &bull; Paytm &bull; PhonePe &bull; BHIM</p>
+            <p style="font-size:9pt; font-weight:bold; margin-top:4px;">{{ company.get('company_name','SOLOGIX ENERGY PRIVATE LIMITED') }}</p>
+            <p style="font-size:9pt; color:#555; margin-top:2px;">{{ company.get('bank_upi_id','8287766474@okbizaxis') }}</p>
+            <p style="font-size:8pt; color:#777; margin-top:2px;">GPay &bull; Paytm &bull; PhonePe &bull; BHIM</p>
           </td>
         </tr>
       </table>
-      <div class="bullet-note" style="margin-top:5px;">
+      <div class="bullet-note" style="margin-top:4px;">
         <span style="color:#2e7d32;">&#x25cf;</span>&nbsp;{{ company.get('payment_reminder','Do not forget to collect receipt of payment.') }}
       </div>
 
@@ -242,23 +261,29 @@
   </tr>
 </table>
 
-<div class="section-heading" style="margin-top:12px;">Acceptance of Proposal</div>
-<table class="acceptance-table">
-  <tr>
-    <th style="width:50%;">For: {{ proposal.customer_name }}</th>
-    <th style="width:50%;">For: {{ company.get('company_name','Sologix Energy Private Limited') }}</th>
-  </tr>
-  <tr>
-    <td style="height:75px;">Signature:<br><br></td>
-    <td style="height:75px;">Signature:<br><br></td>
-  </tr>
-  <tr><td>Name: ____________________</td><td>Name: ____________________</td></tr>
-  <tr><td>Date: ____________________</td><td>Date: ____________________</td></tr>
-  <tr>
-    <td class="accept-label">Address: {{ proposal.customer_address }}</td>
-    <td class="accept-label">Address: {{ company.get('company_signatory','2nd Floor, STPI, Namkum, Ranchi- 834010') }}</td>
-  </tr>
-</table>
+<!-- Acceptance of Proposal -->
+<div class="section-block page-break">
+  <div class="section-heading">Acceptance of Proposal</div>
+  <div class="bullet-note" style="margin-bottom:6px;">
+    <span style="color:#2e7d32;">&#x25cf;</span>&nbsp;<strong>Minimum 50% advance payment required at the time of signing of this proposal.</strong>
+  </div>
+  <table class="acceptance-table">
+    <tr>
+      <th style="width:50%;">For: {{ proposal.customer_name | title }}</th>
+      <th style="width:50%;">For: {{ company.get('company_name','Sologix Energy Private Limited') }}</th>
+    </tr>
+    <tr>
+      <td style="height:70px;">Signature:<br><br></td>
+      <td style="height:70px;">Signature:<br><br></td>
+    </tr>
+    <tr><td>Name: ____________________</td><td>Name: ____________________</td></tr>
+    <tr><td>Date: ____________________</td><td>Date: ____________________</td></tr>
+    <tr>
+      <td class="accept-label">Address: {{ proposal.customer_address }}</td>
+      <td class="accept-label">Address: {{ company.get('company_signatory','2nd Floor, STPI, Namkum, Ranchi- 834010') }}</td>
+    </tr>
+  </table>
+</div>
 
 </body>
 </html>

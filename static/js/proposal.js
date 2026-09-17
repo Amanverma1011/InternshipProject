@@ -3,6 +3,7 @@
  */
 const ProposalCalc = (function () {
   let debounceTimer = null;
+  let inverterManuallyEdited = false;
 
   function fmt(n) {
     if (isNaN(n)) return '—';
@@ -52,8 +53,9 @@ const ProposalCalc = (function () {
         // Update display fields
         if (document.getElementById('totalAreaDisplay'))
           document.getElementById('totalAreaDisplay').value = data.total_area ? data.total_area + ' sq.ft' : '';
-        if (document.getElementById('inverterDisplay'))
-          document.getElementById('inverterDisplay').value = data.inverter_capacity ? data.inverter_capacity + ' kW' : '';
+        const invEl = document.getElementById('inverterDisplay');
+        if (invEl && !inverterManuallyEdited)
+          invEl.value = data.inverter_capacity || '';
 
         // Live bar
         document.getElementById('liveArea').textContent = data.total_area + ' sq.ft';
@@ -148,6 +150,17 @@ const ProposalCalc = (function () {
     // Add row buttons
     document.getElementById('addAddonBtn')?.addEventListener('click', () => addAddonRow());
     document.getElementById('addPaymentBtn')?.addEventListener('click', () => addPaymentRow());
+
+    // Inverter manual override tracking
+    const invEl = document.getElementById('inverterDisplay');
+    if (invEl) {
+      if (invEl.value) inverterManuallyEdited = true; // edit mode: pre-filled
+      invEl.addEventListener('input', () => { inverterManuallyEdited = true; });
+    }
+    // Reset when plant capacity changes so auto-calc takes over again
+    document.getElementById('plantCapacity')?.addEventListener('input', () => {
+      inverterManuallyEdited = false;
+    });
 
     // Live inputs
     ['plantCapacity', 'basePrice', 'discountPercent'].forEach(id => {

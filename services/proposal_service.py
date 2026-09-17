@@ -75,7 +75,7 @@ def create_or_update_proposal(
 ) -> Tuple[Optional[Proposal], List[str]]:
     errors = []
 
-    customer_name = (form_data.get('customer_name') or '').strip()
+    customer_name = (form_data.get('customer_name') or '').strip().title()
     customer_address = (form_data.get('customer_address') or '').strip()
     system_type = (form_data.get('system_type') or '').upper()
     mounting_type = (form_data.get('mounting_type') or '').upper()
@@ -171,7 +171,11 @@ def create_or_update_proposal(
         proposal.total_area = calcs['total_area']
         proposal.mounting_type = mounting_type
         proposal.tilt_angle = form_data.get('tilt_angle') or '15-22 degrees'
-        proposal.inverter_capacity = calcs['inverter_capacity']
+        try:
+            inv_cap = float(form_data.get('inverter_capacity') or 0)
+            proposal.inverter_capacity = Decimal(str(inv_cap)) if inv_cap > 0 else calcs['inverter_capacity']
+        except (ValueError, TypeError):
+            proposal.inverter_capacity = calcs['inverter_capacity']
         proposal.base_price = Decimal(str(base_price))
         proposal.addon_total = calcs['addon_total']
         proposal.subtotal = calcs['subtotal']
@@ -193,17 +197,19 @@ def create_or_update_proposal(
 
         dcr_qty = int(form_data.get('dcr_quantity') or 0)
         ndcr_qty = int(form_data.get('ndcr_quantity') or 0)
+        dcr_make = (form_data.get('dcr_make') or '').strip() or 'Rayzon Solar'
+        ndcr_make = (form_data.get('ndcr_make') or '').strip() or 'Rayzon Solar'
+        dcr_wattage = (form_data.get('dcr_wattage') or '').strip() or settings.get('dcr_module_wattage', '580W-620W')
+        ndcr_wattage = (form_data.get('ndcr_wattage') or '').strip() or settings.get('ndcr_module_wattage', '580W-620W')
         if dcr_qty > 0:
             db.session.add(ProposalModule(
                 proposal_id=proposal.id, module_type='DCR', quantity=dcr_qty,
-                wattage=settings.get('dcr_module_wattage', '580W-620W'),
-                make=settings.get('module_makes', 'Rayzon Solar/Premier Energy/RenewSys/Pahal/Adani/TATA Power')
+                wattage=dcr_wattage, make=dcr_make
             ))
         if ndcr_qty > 0:
             db.session.add(ProposalModule(
                 proposal_id=proposal.id, module_type='NDCR', quantity=ndcr_qty,
-                wattage=settings.get('ndcr_module_wattage', '580W-620W'),
-                make=settings.get('module_makes', 'Rayzon Solar/Premier Energy/RenewSys/Pahal/Adani/TATA Power')
+                wattage=ndcr_wattage, make=ndcr_make
             ))
 
         if system_type == 'HYBRID':

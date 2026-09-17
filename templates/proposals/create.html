@@ -91,9 +91,11 @@
                        value="{{ form_data.total_area if form_data else '' }}" placeholder="Calculated automatically">
             </div>
             <div class="col-md-4">
-                <label class="form-label">Inverter Capacity <small class="text-muted">auto</small></label>
-                <input type="text" id="inverterDisplay" class="form-control" readonly
-                       value="{{ form_data.inverter_capacity if form_data else '' }}" placeholder="= Plant capacity">
+                <label class="form-label">Inverter Capacity (kW)</label>
+                <input type="number" name="inverter_capacity" id="inverterDisplay" class="form-control"
+                       step="0.01" min="0.01"
+                       value="{{ form_data.inverter_capacity if form_data else '' }}" placeholder="Auto = Plant capacity">
+                <div class="form-text">Auto-filled; edit to override</div>
             </div>
         </div>
     </div>
@@ -102,21 +104,60 @@
 <!-- Section 3: Modules -->
 {% set dcr_mod = (modules | selectattr('module_type','equalto','DCR') | list | first) if modules else none %}
 {% set ndcr_mod = (modules | selectattr('module_type','equalto','NDCR') | list | first) if modules else none %}
+{% set makes_list = ['Rayzon Solar', 'Premier Energy', 'RenewSys', 'Pahal', 'Adani', 'TATA Power'] %}
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-success text-white"><i class="bi bi-grid me-2"></i>Module Details</div>
     <div class="card-body">
-        <div class="row g-3">
+        <div class="row g-4">
+            <!-- DCR -->
             <div class="col-md-6">
-                <label class="form-label">DCR Modules (580W-620W) – Qty</label>
-                <input type="number" name="dcr_quantity" class="form-control" min="0"
-                       value="{{ dcr_mod.quantity if dcr_mod else 0 }}">
-                <div class="form-text">Rayzon/Premier Energy/RenewSys/Pahal/Adani/TATA Power</div>
+                <div class="fw-semibold mb-2">DCR Modules <span class="badge bg-success ms-1">Subsidy Eligible</span></div>
+                <div class="row g-2">
+                    <div class="col-5">
+                        <label class="form-label small text-muted mb-1">Wattage</label>
+                        <input type="text" name="dcr_wattage" class="form-control form-control-sm"
+                               value="{{ dcr_mod.wattage if dcr_mod else '580W-620W' }}" placeholder="e.g. 580W-620W">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label small text-muted mb-1">Qty</label>
+                        <input type="number" name="dcr_quantity" id="dcrQty" class="form-control form-control-sm" min="0"
+                               value="{{ dcr_mod.quantity if dcr_mod else 0 }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted mb-1">Make</label>
+                        <select name="dcr_make" class="form-select form-select-sm">
+                            {% set dcr_make_val = dcr_mod.make if dcr_mod else '' %}
+                            {% for mk in makes_list %}
+                            <option value="{{ mk }}" {{ 'selected' if dcr_make_val == mk }}>{{ mk }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
+            <!-- NDCR -->
             <div class="col-md-6">
-                <label class="form-label">NDCR Modules (580W-620W) – Qty</label>
-                <input type="number" name="ndcr_quantity" class="form-control" min="0"
-                       value="{{ ndcr_mod.quantity if ndcr_mod else 0 }}">
-                <div class="form-text">Rayzon/Premier Energy/RenewSys/Pahal/Adani/TATA Power</div>
+                <div class="fw-semibold mb-2">NDCR Modules <span class="badge bg-secondary ms-1">No Subsidy</span></div>
+                <div class="row g-2">
+                    <div class="col-5">
+                        <label class="form-label small text-muted mb-1">Wattage</label>
+                        <input type="text" name="ndcr_wattage" class="form-control form-control-sm"
+                               value="{{ ndcr_mod.wattage if ndcr_mod else '580W-620W' }}" placeholder="e.g. 580W-620W">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label small text-muted mb-1">Qty</label>
+                        <input type="number" name="ndcr_quantity" class="form-control form-control-sm" min="0"
+                               value="{{ ndcr_mod.quantity if ndcr_mod else 0 }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted mb-1">Make</label>
+                        <select name="ndcr_make" class="form-select form-select-sm">
+                            {% set ndcr_make_val = ndcr_mod.make if ndcr_mod else '' %}
+                            {% for mk in makes_list %}
+                            <option value="{{ mk }}" {{ 'selected' if ndcr_make_val == mk }}>{{ mk }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
