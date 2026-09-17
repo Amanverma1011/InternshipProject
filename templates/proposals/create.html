@@ -3,7 +3,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">
-        <i class="bi bi-{{ 'pencil' if edit_mode else 'plus-circle' }} me-2 text-success"></i>
+        <i class="bi bi-{{ 'pencil' if edit_mode else 'plus-circle' }} me-2" style="color:var(--sg-primary);"></i>
         {{ 'Edit' if edit_mode else 'New' }} Proposal
         {% if edit_mode and proposal %}<small class="text-muted fs-5">{{ proposal.proposal_number }}</small>{% endif %}
     </h2>
@@ -37,7 +37,7 @@
 
 <!-- Section 1: Customer -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-success text-white"><i class="bi bi-person me-2"></i>Customer Details</div>
+    <div class="card-header bg-primary text-white"><i class="bi bi-person me-2"></i>Customer Details</div>
     <div class="card-body">
         <div class="row g-3">
             <div class="col-md-6">
@@ -60,7 +60,7 @@
 
 <!-- Section 2: System -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-success text-white"><i class="bi bi-lightning me-2"></i>System Details</div>
+    <div class="card-header bg-primary text-white"><i class="bi bi-lightning me-2"></i>System Details</div>
     <div class="card-body">
         <div class="row g-3">
             <div class="col-md-4">
@@ -106,7 +106,7 @@
 {% set ndcr_mod = (modules | selectattr('module_type','equalto','NDCR') | list | first) if modules else none %}
 {% set makes_list = ['Rayzon Solar', 'Premier Energy', 'RenewSys', 'Pahal', 'Adani', 'TATA Power'] %}
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-success text-white"><i class="bi bi-grid me-2"></i>Module Details</div>
+    <div class="card-header bg-primary text-white"><i class="bi bi-grid me-2"></i>Module Details</div>
     <div class="card-body">
         <div class="row g-4">
             <!-- DCR -->
@@ -189,7 +189,7 @@
 
 <!-- Section 5: Commercial -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-success text-white"><i class="bi bi-currency-rupee me-2"></i>Commercial Offer</div>
+    <div class="card-header bg-primary text-white"><i class="bi bi-currency-rupee me-2"></i>Commercial Offer</div>
     <div class="card-body">
         <div class="row g-3 mb-3">
             <div class="col-md-6">
@@ -219,7 +219,7 @@
                 {% endfor %}
                 {% endif %}
             </div>
-            <button type="button" id="addAddonBtn" class="btn btn-outline-success btn-sm mt-1">
+            <button type="button" id="addAddonBtn" class="btn btn-outline-primary btn-sm mt-1">
                 <i class="bi bi-plus me-1"></i>Add Add-on
             </button>
         </div>
@@ -228,7 +228,7 @@
 
 <!-- Section 6: Payment Terms -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-success text-white"><i class="bi bi-receipt me-2"></i>Payment Terms</div>
+    <div class="card-header bg-primary text-white"><i class="bi bi-receipt me-2"></i>Payment Terms</div>
     <div class="card-body">
         <div id="paymentsContainer">
             {% if payments %}
@@ -247,7 +247,7 @@
             </div>
             {% endif %}
         </div>
-        <button type="button" id="addPaymentBtn" class="btn btn-outline-success btn-sm mt-1">
+        <button type="button" id="addPaymentBtn" class="btn btn-outline-primary btn-sm mt-1">
             <i class="bi bi-plus me-1"></i>Add Payment Stage
         </button>
         <div id="paymentWarning" class="alert alert-danger mt-2 d-none">
@@ -277,7 +277,7 @@
             </table>
         </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-success w-100 btn-lg">
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
                 <i class="bi bi-save me-2"></i>Save Draft
             </button>
         </div>

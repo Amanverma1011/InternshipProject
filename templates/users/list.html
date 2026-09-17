@@ -3,8 +3,8 @@
 {% block meta_description %}Manage Sologix Energy system users – create, enable, disable and reset passwords.{% endblock %}
 {% block content %}
 <div class="page-header">
-    <h2><i class="bi bi-people me-2 text-success"></i>Users</h2>
-    <a href="{{ url_for('users.create_user') }}" class="btn btn-success">
+    <h2><i class="bi bi-people me-2" style="color:var(--sg-primary);"></i>Users</h2>
+    <a href="{{ url_for('users.create_user') }}" class="btn btn-primary">
         <i class="bi bi-person-plus me-1"></i>New User
     </a>
 </div>
@@ -65,7 +65,7 @@
                         <div class="modal-content border-0 shadow">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="resetLabel{{ u.id }}">
-                                    <i class="bi bi-key me-2 text-success"></i>Reset: {{ u.username }}
+                                    <i class="bi bi-key me-2" style="color:var(--sg-primary);"></i>Reset: {{ u.username }}
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-check-circle me-1"></i>Reset Password
                                     </button>
                                 </div>

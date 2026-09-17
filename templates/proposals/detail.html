@@ -12,7 +12,7 @@
             <i class="bi bi-arrow-left me-1"></i>Back
         </a>
         <div>
-            <h2 class="mb-0 d-inline"><i class="bi bi-file-text me-2 text-success"></i>{{ proposal.proposal_number }}</h2>
+            <h2 class="mb-0 d-inline"><i class="bi bi-file-text me-2" style="color:var(--sg-primary);"></i><span class="proposal-number">{{ proposal.proposal_number }}</span></h2>
             <span class="badge bg-{{ sc.get(proposal.status,'secondary') }} ms-2">{{ proposal.status }}</span>
             <span class="badge bg-{{ 'primary' if proposal.system_type=='ONGRID' else 'warning text-dark' }} ms-1">{{ proposal.system_type }}</span>
         </div>
@@ -192,7 +192,7 @@
 <!-- Generate PDF -->
 {% if proposal.status in ('DRAFT', 'GENERATED') %}
 <div class="card border-0 shadow-sm mb-3">
-    <div class="card-header bg-success text-white">
+    <div class="card-header bg-primary text-white">
         <i class="bi bi-file-pdf me-2"></i>Generate PDF
     </div>
     <div class="card-body">
@@ -205,7 +205,7 @@
         </p>
         <form method="post" action="{{ url_for('proposals.generate', proposal_id=proposal.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="btn btn-success w-100">
+            <button type="submit" class="btn btn-primary w-100">
                 <i class="bi bi-file-earmark-pdf me-2"></i>Generate PDF
             </button>
         </form>

@@ -3,8 +3,8 @@
 {% block meta_description %}Sologix Energy proposal dashboard – overview of all solar proposals, accepted/rejected stats and daily activity.{% endblock %}
 {% block content %}
 <div class="page-header">
-    <h2><i class="bi bi-speedometer2 me-2 text-success"></i>Dashboard</h2>
-    <a href="{{ url_for('proposals.create') }}" class="btn btn-success">
+    <h2><i class="bi bi-speedometer2 me-2" style="color:var(--sg-primary);"></i>Dashboard</h2>
+    <a href="{{ url_for('proposals.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle me-1"></i>New Proposal
     </a>
 </div>
@@ -15,7 +15,7 @@
     <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-primary">{{ total }}</div>
+                <div class="stat-number">{{ total }}</div>
                 <div class="stat-label">Total</div>
             </div>
         </div>
@@ -23,7 +23,7 @@
     <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-success">{{ accepted }}</div>
+                <div class="stat-number" style="color:#16a34a;">{{ accepted }}</div>
                 <div class="stat-label">Accepted</div>
             </div>
         </div>
@@ -31,7 +31,7 @@
     <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-danger">{{ rejected }}</div>
+                <div class="stat-number" style="color:#dc2626;">{{ rejected }}</div>
                 <div class="stat-label">Rejected</div>
             </div>
         </div>
@@ -39,7 +39,7 @@
     <div class="col-6 col-sm-3">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-info">{{ total_users }}</div>
+                <div class="stat-number">{{ total_users }}</div>
                 <div class="stat-label">Users</div>
             </div>
         </div>
@@ -47,7 +47,7 @@
     <div class="col-6">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-warning">{{ today_generated }}</div>
+                <div class="stat-number" style="color:var(--sg-primary);">{{ today_generated }}</div>
                 <div class="stat-label">Generated Today</div>
             </div>
         </div>
@@ -55,7 +55,7 @@
     <div class="col-6">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-secondary">{{ generated }}</div>
+                <div class="stat-number">{{ generated }}</div>
                 <div class="stat-label">Pending</div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="stat-label mt-1">Proposals Today</div>
                 <div class="progress mt-2" style="height:6px;border-radius:3px;">
-                    <div class="progress-bar bg-success" style="width:{{ (quota_used/quota_total*100)|int }}%"></div>
+                    <div class="progress-bar" style="width:{{ (quota_used/quota_total*100)|int }}%;background:var(--sg-primary);"></div>
                 </div>
                 <small class="text-muted d-block mt-1">{{ quota_remaining }} remaining</small>
             </div>
@@ -84,7 +84,7 @@
     <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-primary">{{ total }}</div>
+                <div class="stat-number">{{ total }}</div>
                 <div class="stat-label">Total</div>
             </div>
         </div>
@@ -92,7 +92,7 @@
     <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-success">{{ accepted }}</div>
+                <div class="stat-number" style="color:#16a34a;">{{ accepted }}</div>
                 <div class="stat-label">Accepted</div>
             </div>
         </div>
@@ -100,7 +100,7 @@
     <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-danger">{{ rejected }}</div>
+                <div class="stat-number" style="color:#dc2626;">{{ rejected }}</div>
                 <div class="stat-label">Rejected</div>
             </div>
         </div>
@@ -108,7 +108,7 @@
     <div class="col-6 col-sm-auto flex-fill">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-3">
-                <div class="stat-number text-secondary">{{ generated }}</div>
+                <div class="stat-number">{{ generated }}</div>
                 <div class="stat-label">Generated</div>
             </div>
         </div>
@@ -119,8 +119,8 @@
 <!-- Recent Proposals -->
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
-        <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-success"></i>Recent Proposals</h6>
-        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-sm btn-outline-success">
+        <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2" style="color:var(--sg-primary);"></i>Recent Proposals</h6>
+        <a href="{{ url_for('proposals.list_proposals') }}" class="btn btn-sm btn-outline-primary">
             View All <i class="bi bi-arrow-right ms-1"></i>
         </a>
     </div>
@@ -144,7 +144,7 @@
                 {% for p in recent %}
                 {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
                 <tr>
-                    <td><code class="text-success small">{{ p.proposal_number }}</code></td>
+                    <td><span class="proposal-number">{{ p.proposal_number }}</span></td>
                     <td>
                         <span class="fw-semibold">{{ p.customer_name }}</span>
                         <span class="d-inline d-md-none ms-1">
@@ -159,9 +159,7 @@
                     <td><span class="badge bg-{{ sc.get(p.status,'secondary') }}">{{ p.status }}</span></td>
                     <td class="d-none d-lg-table-cell text-muted small">{{ p.proposal_date.strftime('%d %b %Y') if p.proposal_date else '—' }}</td>
                     <td>
-                        <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-eye d-none d-sm-inline"></i> View
-                        </a>
+                        <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -171,7 +169,7 @@
         {% else %}
         <div class="empty-state">
             <i class="bi bi-file-earmark-plus d-block"></i>
-            <p>No proposals yet. <a href="{{ url_for('proposals.create') }}" class="text-success fw-semibold">Create your first one</a>.</p>
+            <p>No proposals yet. <a href="{{ url_for('proposals.create') }}" class="fw-semibold" style="color:var(--sg-primary);">Create your first one</a>.</p>
         </div>
         {% endif %}
     </div>

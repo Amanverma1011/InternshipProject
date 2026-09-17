@@ -3,8 +3,8 @@
 {% block meta_description %}All solar proposals created in the Sologix Energy proposal management system.{% endblock %}
 {% block content %}
 <div class="page-header">
-    <h2><i class="bi bi-file-text me-2 text-success"></i>Proposals</h2>
-    <a href="{{ url_for('proposals.create') }}" class="btn btn-success">
+    <h2><i class="bi bi-file-text me-2" style="color:var(--sg-primary);"></i>Proposals</h2>
+    <a href="{{ url_for('proposals.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle me-1"></i>New Proposal
     </a>
 </div>
@@ -31,7 +31,7 @@
                 {% for p in proposals %}
                 {% set sc = {'DRAFT':'secondary','GENERATED':'info','ACCEPTED':'success','REJECTED':'danger'} %}
                 <tr>
-                    <td><code class="text-success small">{{ p.proposal_number }}</code></td>
+                    <td><span class="proposal-number">{{ p.proposal_number }}</span></td>
                     <td>
                         <span class="fw-semibold">{{ p.customer_name }}</span>
                         <span class="d-inline d-md-none ms-1">
@@ -50,7 +50,7 @@
                     {% endif %}
                     <td>
                         <div class="d-flex gap-1 flex-nowrap">
-                            <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-success">View</a>
+                            <a href="{{ url_for('proposals.detail', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
                             {% if p.status == 'DRAFT' %}
                             <a href="{{ url_for('proposals.edit', proposal_id=p.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                             {% endif %}
@@ -69,7 +69,7 @@
         {% else %}
         <div class="empty-state">
             <i class="bi bi-file-earmark-plus d-block"></i>
-            <p>No proposals found. <a href="{{ url_for('proposals.create') }}" class="text-success fw-semibold">Create one now</a>.</p>
+            <p>No proposals found. <a href="{{ url_for('proposals.create') }}" class="fw-semibold" style="color:var(--sg-primary);">Create one now</a>.</p>
         </div>
         {% endif %}
     </div>
