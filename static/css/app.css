@@ -190,6 +190,8 @@ body {
 .sidebar.collapsed .sidebar-collapse-btn    { justify-content: center; padding: 0.6rem; }
 .sidebar.collapsed .sidebar-collapse-label  { opacity: 0; width: 0; overflow: hidden; }
 .sidebar.collapsed #collapseIcon            { /* handled via JS class swap */ }
+.sidebar.collapsed .sidebar-brand           { padding: 0.75rem 0; display: flex; justify-content: center; }
+.sidebar.collapsed .sidebar-logo            { height: 26px; }
 
 /* Tooltip when collapsed */
 .sidebar.collapsed .sidebar-link {
